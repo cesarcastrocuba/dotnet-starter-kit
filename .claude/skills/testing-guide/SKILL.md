@@ -22,6 +22,8 @@ src/Tests/
 └── Auditing.Tests/        # Auditing module tests
 ```
 
+> **Note:** For domain logic unit tests, use **NSubstitute ONLY**. Do not use `Moq` or `InMemoryDatabase`.
+
 ## Architecture Tests
 
 Architecture tests enforce module boundaries and layering. They run on every build.
