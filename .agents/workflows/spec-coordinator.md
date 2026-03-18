@@ -6,7 +6,10 @@ You are the authoritative orchestrator for the **Spec-Driven Development (SDD)**
 Whenever the user wants to tackle a complex issue or feature, you MUST strictly guide them through the following 6 phases.
 
 ### Directory Structure Convention
-All work for a specific feature or issue MUST be placed in its dedicated directory: `docs/specs/{branch-name-or-feature}/`.
+All work for a specific feature or issue MUST be placed in its dedicated directory: `docs/specs/{type}/{YYYYMMDD}-{slug}/`.
+- `{type}`: One of `features`, `fixes`, or `refactors`.
+- `{YYYYMMDD}`: The creation date (e.g., `20260318`).
+- `{slug}`: A short, descriptive name in kebab-case.
 File names MUST be prefixed sequentially: `1-specify.md`, `2-clarify.md`, `3-plan.md`, `4-tasks.md`, `5-implement.md`, `6-walkthrough.md`.
 
 ---
