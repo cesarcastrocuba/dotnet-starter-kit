@@ -488,7 +488,7 @@ $RECYCLE.BIN/
 /.bmad
 
 team/
-docs/
+# docs/
 spec-os/
 /PLAN.md
 **/nul
