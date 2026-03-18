@@ -12,12 +12,17 @@ FSH uses a layered testing strategy with architecture tests as guardrails.
 ```
 src/Tests/
 ├── Architecture.Tests/    # Enforces layering rules
-├── Shared.Tests/          # Core infrastructure (Testcontainers, WebApplicationFactory)
+├── Shared.Tests/          # Core infrastructure
 ├── Integration.Tests/     # Database & Mediator testing (No HTTP)
 ├── Functional.Tests/      # End-to-End vertical slices via HTTP
 ├── Spec.Tests/            # BDD Acceptance specs
-└── {Module}.Tests/        # Unit tests for domain logic (Use Mocks ONLY. NO InMemoryDatabase)
+├── Generic.Tests/         # Shared test utilities & framework unit tests
+├── Identity.Tests/        # Identity module tests
+├── Multitenancy.Tests/    # Multitenancy module tests
+└── Auditing.Tests/        # Auditing module tests
 ```
+
+> **Note:** For domain logic unit tests, use **NSubstitute ONLY**. Do not use `Moq` or `InMemoryDatabase`.
 
 ## Architecture Tests
 
@@ -211,8 +216,8 @@ dotnet test --filter "FullyQualifiedName~Create{Entity}HandlerTests"
 |------------|---------|
 | Test class name | `{ClassUnderTest}Tests` |
 | Test method name | `{Method}_{Scenario}_{ExpectedResult}` |
-| Structure | Always Arrange-Act-Assert |
-| Assertions | Multiple asserts OK if same concept |
+| Arrange-Act-Assert | Always use this structure |
+| One assertion concept | Multiple asserts OK if same concept |
 
 ## Key Rules
 

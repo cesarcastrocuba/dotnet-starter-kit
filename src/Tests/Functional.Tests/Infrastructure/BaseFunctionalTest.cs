@@ -20,19 +20,19 @@ public abstract class BaseFunctionalTest : IClassFixture<CustomWebApplicationFac
 
     protected async Task AuthenticateAsync(string email, string password)
     {
-        var response = await Client.PostAsJsonAsync("/api/v1/tokens", new { email, password });
+        var response = await Client.PostAsJsonAsync("/api/v1/identity/token/issue", new { email, password });
         response.EnsureSuccessStatusCode();
         
         var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
-        if (tokenResponse?.Token != null)
+        if (tokenResponse?.AccessToken != null)
         {
-            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.Token);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
         }
     }
     
     public sealed class TokenResponse
     {
-        public string? Token { get; set; }
+        public string? AccessToken { get; set; }
     }
 }
 
