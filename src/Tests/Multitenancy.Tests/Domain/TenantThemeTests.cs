@@ -164,7 +164,7 @@ public sealed class TenantThemeTests
         var before = DateTimeOffset.UtcNow;
 
         // Act
-        theme.Update("modifier-user");
+        theme.Update();
         var after = DateTimeOffset.UtcNow;
 
         // Assert
@@ -194,7 +194,7 @@ public sealed class TenantThemeTests
         var theme = TenantTheme.Create("tenant-1");
 
         // Act
-        theme.Update(null);
+        theme.Update();
 
         // Assert
         theme.LastModifiedBy.ShouldBeNull();

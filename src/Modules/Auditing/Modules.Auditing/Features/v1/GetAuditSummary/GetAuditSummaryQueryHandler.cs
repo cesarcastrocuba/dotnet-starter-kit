@@ -28,14 +28,14 @@ public sealed class GetAuditSummaryQueryHandler : IQueryHandler<GetAuditSummaryQ
 
     private static IQueryable<AuditRecord> ApplyFilters(IQueryable<AuditRecord> audits, GetAuditSummaryQuery query)
     {
-        if (query.FromUtc.HasValue)
+        if (query.FromOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc >= query.FromUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc >= query.FromOnUtc.Value);
         }
 
-        if (query.ToUtc.HasValue)
+        if (query.ToOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc <= query.ToUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc <= query.ToOnUtc.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(query.TenantId))

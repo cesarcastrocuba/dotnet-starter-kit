@@ -28,17 +28,17 @@
                         </MudStack>
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Class="text-muted">Valid Until</MudText>
-                            <MudText Typo="Typo.body2" Class="fw-600" Color="@GetExpiryColor(Tenant.ValidUpto)">
-                                @Tenant.ValidUpto.ToString("MMMM dd, yyyy")
+                            <MudText Typo="Typo.body2" Class="fw-600" Color="@GetExpiryColor(Tenant.ValidUptoOnUtc)">
+                                @Tenant.ValidUptoOnUtc.ToString("MMMM dd, yyyy")
                             </MudText>
                         </MudStack>
                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                             <MudText Typo="Typo.body2" Class="text-muted">Status</MudText>
-                            @if (IsExpired(Tenant.ValidUpto))
+                            @if (IsExpired(Tenant.ValidUptoOnUtc))
                             {
                                 <MudChip T="string" Color="Color.Error" Size="Size.Small">Expired</MudChip>
                             }
-                            else if (IsExpiringSoon(Tenant.ValidUpto))
+                            else if (IsExpiringSoon(Tenant.ValidUptoOnUtc))
                             {
                                 <MudChip T="string" Color="Color.Warning" Size="Size.Small">Expiring Soon</MudChip>
                             }
@@ -105,7 +105,7 @@
                                 <strong>Preview:</strong> Subscription will be extended to @_newExpiryDate.Value.ToString("MMMM dd, yyyy")
                             </MudText>
                             @{
-                                var daysAdded = (_newExpiryDate.Value - Tenant.ValidUpto.Date).Days;
+                                var daysAdded = (_newExpiryDate.Value - Tenant.ValidUptoOnUtc.Date).Days;
                                 if (daysAdded > 0)
                                 {
                                     <MudText Typo="Typo.caption" Class="text-muted">
@@ -165,8 +165,8 @@
         if (Tenant is not null)
         {
             // Default to current expiry + 30 days, or today + 30 days if expired
-            var baseDate = Tenant.ValidUpto.Date > DateTime.Today
-                ? Tenant.ValidUpto.Date
+            var baseDate = Tenant.ValidUptoOnUtc.Date > DateTime.Today
+                ? Tenant.ValidUptoOnUtc.Date
                 : DateTime.Today;
             _newExpiryDate = baseDate.AddDays(30);
         }
@@ -176,8 +176,8 @@
     {
         if (Tenant is null) return;
 
-        var baseDate = Tenant.ValidUpto.Date > DateTime.Today
-            ? Tenant.ValidUpto.Date
+        var baseDate = Tenant.ValidUptoOnUtc.Date > DateTime.Today
+            ? Tenant.ValidUptoOnUtc.Date
             : DateTime.Today;
         _newExpiryDate = baseDate.AddDays(days);
     }
@@ -226,7 +226,7 @@
             var command = new UpgradeTenantCommand
             {
                 Tenant = Tenant.Id,
-                ExtendedExpiryDate = new DateTimeOffset(utcDate)
+                ExtendedExpiryOnUtc = new DateTimeOffset(utcDate)
             };
 
             await TenantsClient.UpgradeAsync(Tenant.Id, command);

@@ -9,7 +9,7 @@ public interface ISessionService
         string refreshTokenHash,
         string ipAddress,
         string userAgent,
-        DateTime expiresAt,
+        DateTimeOffset expiresOnUtc,
         CancellationToken cancellationToken = default);
 
     ValueTask<List<UserSessionDto>> GetUserSessionsAsync(
@@ -56,7 +56,7 @@ public interface ISessionService
     ValueTask UpdateSessionRefreshTokenAsync(
         string oldRefreshTokenHash,
         string newRefreshTokenHash,
-        DateTime newExpiresAt,
+        DateTimeOffset newExpiresOnUtc,
         CancellationToken cancellationToken = default);
 
     ValueTask<bool> ValidateSessionAsync(

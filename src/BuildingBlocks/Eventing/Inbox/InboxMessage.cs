@@ -16,7 +16,7 @@ public class InboxMessage
 
     public string HandlerName { get; set; } = default!;
 
-    public DateTime ProcessedOnUtc { get; set; }
+    public DateTimeOffset ProcessedOnUtc { get; set; }
 
     public string? TenantId { get; set; }
 }
@@ -36,7 +36,7 @@ public class InboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
 
         builder.ToTable("InboxMessages", _schema);
 
-        builder.HasKey(i => new { i.Id, i.HandlerName });
+        builder.HasKey(i => new { i.Id, i.HandlerName, i.TenantId });
 
         builder.Property(i => i.EventType)
             .HasMaxLength(512)

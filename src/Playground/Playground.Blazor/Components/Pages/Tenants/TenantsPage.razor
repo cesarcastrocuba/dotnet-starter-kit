@@ -135,24 +135,24 @@ else
                     </CellTemplate>
                 </TemplateColumn>
                 <PropertyColumn Property="x => x.AdminEmail" Title="Admin Email" Sortable="true" />
-                <TemplateColumn Title="Subscription" Sortable="true" SortBy="@(x => x.ValidUpto)">
+                <TemplateColumn Title="Subscription" Sortable="true" SortBy="@(x => x.ValidUptoOnUtc)">
                     <CellTemplate>
                         <MudStack Spacing="0">
-                            <MudText Typo="Typo.body2">@context.Item.ValidUpto.ToString("MMM dd, yyyy")</MudText>
-                            @if (IsExpiringSoon(context.Item.ValidUpto))
+                            <MudText Typo="Typo.body2">@context.Item.ValidUptoOnUtc.ToString("MMM dd, yyyy")</MudText>
+                            @if (IsExpiringSoon(context.Item.ValidUptoOnUtc))
                             {
                                 <MudText Typo="Typo.caption" Color="Color.Warning">
-                                    @GetExpiryText(context.Item.ValidUpto)
+                                    @GetExpiryText(context.Item.ValidUptoOnUtc)
                                 </MudText>
                             }
-                            else if (IsExpired(context.Item.ValidUpto))
+                            else if (IsExpired(context.Item.ValidUptoOnUtc))
                             {
                                 <MudText Typo="Typo.caption" Color="Color.Error">Expired</MudText>
                             }
                             else
                             {
                                 <MudText Typo="Typo.caption" Class="text-muted">
-                                    @GetExpiryText(context.Item.ValidUpto)
+                                    @GetExpiryText(context.Item.ValidUptoOnUtc)
                                 </MudText>
                             }
                         </MudStack>
@@ -336,7 +336,7 @@ else
             Total = _tenants.Count,
             Active = _tenants.Count(t => t.IsActive),
             Inactive = _tenants.Count(t => !t.IsActive),
-            ExpiringSoon = _tenants.Count(t => t.IsActive && t.ValidUpto > now && t.ValidUpto <= thirtyDaysFromNow)
+            ExpiringSoon = _tenants.Count(t => t.IsActive && t.ValidUptoOnUtc > now && t.ValidUptoOnUtc <= thirtyDaysFromNow)
         };
     }
 

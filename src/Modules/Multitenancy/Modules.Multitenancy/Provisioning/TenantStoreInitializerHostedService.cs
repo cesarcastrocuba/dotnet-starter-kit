@@ -40,7 +40,7 @@ public sealed class TenantStoreInitializerHostedService : IHostedService
                 MultitenancyConstants.Root.EmailAddress,
                 issuer: MultitenancyConstants.Root.Issuer);
 
-            var validUpto = DateTime.UtcNow.AddYears(1);
+            var validUpto = DateTimeOffset.UtcNow.AddYears(1);
             rootTenant.SetValidity(validUpto);
             await tenantDbContext.TenantInfo.AddAsync(rootTenant, cancellationToken).ConfigureAwait(false);
             await tenantDbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

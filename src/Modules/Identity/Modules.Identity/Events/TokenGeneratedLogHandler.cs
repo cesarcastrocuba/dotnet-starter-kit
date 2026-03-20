@@ -25,13 +25,13 @@ public sealed class TokenGeneratedLogHandler
         if (_logger.IsEnabled(LogLevel.Information))
         {
             _logger.LogInformation(
-                "Token generated for user {UserId} ({Email}) with client {ClientId}, IP {IpAddress}, UserAgent {UserAgent}, expires at {ExpiresAtUtc} (fingerprint: {Fingerprint})",
+                "Token generated for user {UserId} ({Email}) with client {ClientId}, IP {IpAddress}, UserAgent {UserAgent}, expires on {ExpiresOnUtc} (fingerprint: {Fingerprint})",
                 @event.UserId,
                 @event.Email,
                 @event.ClientId,
                 @event.IpAddress,
                 @event.UserAgent,
-                @event.AccessTokenExpiresAtUtc,
+                @event.AccessTokenExpiresOnUtc,
                 @event.TokenFingerprint);
         }
 

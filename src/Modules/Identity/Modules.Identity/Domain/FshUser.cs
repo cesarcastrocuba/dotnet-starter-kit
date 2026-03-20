@@ -1,11 +1,13 @@
 using FSH.Framework.Core.Domain;
+using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Identity.Domain.Events;
 using Microsoft.AspNetCore.Identity;
 
 namespace FSH.Modules.Identity.Domain;
 
-public class FshUser : IdentityUser, IHasDomainEvents
+public class FshUser : IdentityUser, IHasDomainEvents, IHasTenant
 {
+    public string TenantId { get; set; } = default!;
     private readonly List<IDomainEvent> _domainEvents = [];
 
     public string? FirstName { get; set; }
@@ -13,12 +15,12 @@ public class FshUser : IdentityUser, IHasDomainEvents
     public Uri? ImageUrl { get; set; }
     public bool IsActive { get; set; }
     public string? RefreshToken { get; set; }
-    public DateTime RefreshTokenExpiryTime { get; set; }
+    public DateTimeOffset RefreshTokenExpiresOnUtc { get; set; }
 
     public string? ObjectId { get; set; }
 
     /// <summary>Timestamp when the user last changed their password</summary>
-    public DateTime LastPasswordChangeDate { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset LastPasswordChangeOnUtc { get; set; } = DateTimeOffset.UtcNow;
 
     // Navigation property for password history
     public virtual ICollection<PasswordHistory> PasswordHistories { get; set; } = new List<PasswordHistory>();

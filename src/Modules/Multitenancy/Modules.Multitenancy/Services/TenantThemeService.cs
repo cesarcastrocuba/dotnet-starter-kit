@@ -96,7 +96,7 @@ public sealed class TenantThemeService : ITenantThemeService
         await HandleBrandAssetUploadsAsync(theme.BrandAssets, entity, ct).ConfigureAwait(false);
 
         MapDtoToEntity(theme, entity);
-        entity.Update(GetCurrentUserId());
+        entity.Update();
 
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
         await InvalidateCacheAsync(tenantId, ct).ConfigureAwait(false);
@@ -169,7 +169,7 @@ public sealed class TenantThemeService : ITenantThemeService
         if (entity is not null)
         {
             entity.ResetToDefaults();
-            entity.Update(GetCurrentUserId());
+            entity.Update();
             await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
         }
 

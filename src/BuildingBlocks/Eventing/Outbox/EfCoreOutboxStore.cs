@@ -72,7 +72,7 @@ public sealed class EfCoreOutboxStore<TDbContext> : IOutboxStore
     {
         ArgumentNullException.ThrowIfNull(message);
 
-        message.ProcessedOnUtc = DateTime.UtcNow;
+        message.ProcessedOnUtc = DateTimeOffset.UtcNow;
         _dbContext.Set<OutboxMessage>().Update(message);
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
     }

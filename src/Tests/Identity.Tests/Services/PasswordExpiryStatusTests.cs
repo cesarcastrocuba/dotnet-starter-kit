@@ -16,7 +16,7 @@ public sealed class PasswordExpiryStatusTests
             IsExpired = true,
             IsExpiringWithinWarningPeriod = false,
             DaysUntilExpiry = -10,
-            ExpiryDate = DateTime.UtcNow.AddDays(-10)
+            ExpiresOnUtc = DateTimeOffset.UtcNow.AddDays(-10)
         };
 
         // Act
@@ -35,7 +35,7 @@ public sealed class PasswordExpiryStatusTests
             IsExpired = false,
             IsExpiringWithinWarningPeriod = true,
             DaysUntilExpiry = 5,
-            ExpiryDate = DateTime.UtcNow.AddDays(5)
+            ExpiresOnUtc = DateTimeOffset.UtcNow.AddDays(5)
         };
 
         // Act
@@ -54,7 +54,7 @@ public sealed class PasswordExpiryStatusTests
             IsExpired = false,
             IsExpiringWithinWarningPeriod = false,
             DaysUntilExpiry = 60,
-            ExpiryDate = DateTime.UtcNow.AddDays(60)
+            ExpiresOnUtc = DateTimeOffset.UtcNow.AddDays(60)
         };
 
         // Act
@@ -73,7 +73,7 @@ public sealed class PasswordExpiryStatusTests
             IsExpired = true,
             IsExpiringWithinWarningPeriod = true, // Should be ignored
             DaysUntilExpiry = -1,
-            ExpiryDate = DateTime.UtcNow.AddDays(-1)
+            ExpiresOnUtc = DateTimeOffset.UtcNow.AddDays(-1)
         };
 
         // Act
@@ -87,7 +87,7 @@ public sealed class PasswordExpiryStatusTests
     public void Properties_Should_BeSettableAndGettable()
     {
         // Arrange
-        var expiryDate = new DateTime(2024, 12, 31, 12, 0, 0, DateTimeKind.Utc);
+        var expiresOnUtc = new DateTimeOffset(2024, 12, 31, 12, 0, 0, TimeSpan.Zero);
 
         // Act
         var status = new PasswordExpiryStatusDto
@@ -95,18 +95,18 @@ public sealed class PasswordExpiryStatusTests
             IsExpired = true,
             IsExpiringWithinWarningPeriod = false,
             DaysUntilExpiry = -5,
-            ExpiryDate = expiryDate
+            ExpiresOnUtc = expiresOnUtc
         };
 
         // Assert
         status.IsExpired.ShouldBeTrue();
         status.IsExpiringWithinWarningPeriod.ShouldBeFalse();
         status.DaysUntilExpiry.ShouldBe(-5);
-        status.ExpiryDate.ShouldBe(expiryDate);
+        status.ExpiresOnUtc.ShouldBe(expiresOnUtc);
     }
 
     [Fact]
-    public void ExpiryDate_Should_AllowNull()
+    public void ExpiresOnUtc_Should_AllowNull()
     {
         // Arrange & Act
         var status = new PasswordExpiryStatusDto
@@ -114,11 +114,11 @@ public sealed class PasswordExpiryStatusTests
             IsExpired = false,
             IsExpiringWithinWarningPeriod = false,
             DaysUntilExpiry = int.MaxValue,
-            ExpiryDate = null
+            ExpiresOnUtc = null
         };
 
         // Assert
-        status.ExpiryDate.ShouldBeNull();
+        status.ExpiresOnUtc.ShouldBeNull();
         status.Status.ShouldBe("Valid");
     }
 
@@ -132,7 +132,7 @@ public sealed class PasswordExpiryStatusTests
         status.IsExpired.ShouldBeFalse();
         status.IsExpiringWithinWarningPeriod.ShouldBeFalse();
         status.DaysUntilExpiry.ShouldBe(0);
-        status.ExpiryDate.ShouldBeNull();
+        status.ExpiresOnUtc.ShouldBeNull();
         status.Status.ShouldBe("Valid");
     }
 }

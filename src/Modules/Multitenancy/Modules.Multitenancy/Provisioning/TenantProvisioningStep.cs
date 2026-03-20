@@ -13,9 +13,9 @@ public sealed class TenantProvisioningStep : BaseEntity<Guid>
 
     public string? Error { get; private set; }
 
-    public DateTime? StartedUtc { get; private set; }
+    public DateTimeOffset? StartedOnUtc { get; private set; }
 
-    public DateTime? CompletedUtc { get; private set; }
+    public DateTimeOffset? CompletedOnUtc { get; private set; }
 
     [ForeignKey(nameof(ProvisioningId))]
     public TenantProvisioning? Provisioning { get; private set; }
@@ -34,19 +34,19 @@ public sealed class TenantProvisioningStep : BaseEntity<Guid>
     public void MarkRunning()
     {
         Status = TenantProvisioningStatus.Running;
-        StartedUtc ??= DateTime.UtcNow;
+        StartedOnUtc ??= DateTimeOffset.UtcNow;
     }
 
     public void MarkCompleted()
     {
         Status = TenantProvisioningStatus.Completed;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedOnUtc = DateTimeOffset.UtcNow;
     }
 
     public void MarkFailed(string error)
     {
         Status = TenantProvisioningStatus.Failed;
         Error = error;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedOnUtc = DateTimeOffset.UtcNow;
     }
 }

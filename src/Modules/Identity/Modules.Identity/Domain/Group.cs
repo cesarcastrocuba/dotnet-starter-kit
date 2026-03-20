@@ -1,9 +1,11 @@
 using FSH.Framework.Core.Domain;
+using FSH.Framework.Shared.Multitenancy;
 
 namespace FSH.Modules.Identity.Domain;
 
-public class Group : BaseEntity<Guid>, IAuditableEntity, ISoftDeletable
+public class Group : BaseEntity<Guid>, IAuditableEntity, ISoftDeletable, IHasTenant
 {
+    public string TenantId { get; set; } = default!;
     public string Name { get; private set; } = default!;
     public string? Description { get; private set; }
     public bool IsDefault { get; private set; }
@@ -26,39 +28,33 @@ public class Group : BaseEntity<Guid>, IAuditableEntity, ISoftDeletable
 
     private Group() { } // EF Core
 
-    public static Group Create(string name, string? description = null, bool isDefault = false, bool isSystemGroup = false, string? createdBy = null)
+    public static Group Create(string name, string tenantId, string? description = null, bool isDefault = false, bool isSystemGroup = false, string? createdBy = null)
     {
         return new Group
         {
             Id = Guid.NewGuid(),
             Name = name,
+            TenantId = tenantId,
             Description = description,
             IsDefault = isDefault,
             IsSystemGroup = isSystemGroup,
-            CreatedOnUtc = DateTimeOffset.UtcNow,
             CreatedBy = createdBy
         };
     }
 
-    public void Update(string name, string? description, string? modifiedBy = null)
+    public void Update(string name, string? description)
     {
         Name = name;
         Description = description;
-        LastModifiedOnUtc = DateTimeOffset.UtcNow;
-        LastModifiedBy = modifiedBy;
     }
 
-    public void SetAsDefault(bool isDefault, string? modifiedBy = null)
+    public void SetAsDefault(bool isDefault)
     {
         IsDefault = isDefault;
-        LastModifiedOnUtc = DateTimeOffset.UtcNow;
-        LastModifiedBy = modifiedBy;
     }
 
-    public void Delete(string? deletedBy = null)
+    public void Delete()
     {
         IsDeleted = true;
-        DeletedOnUtc = DateTimeOffset.UtcNow;
-        DeletedBy = deletedBy;
     }
 }

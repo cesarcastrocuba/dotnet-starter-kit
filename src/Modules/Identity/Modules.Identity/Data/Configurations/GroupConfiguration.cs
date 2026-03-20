@@ -15,6 +15,10 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
             .ToTable("Groups", IdentityModuleConstants.SchemaName)
             .IsMultiTenant();
 
+        builder.Property(x => x.TenantId)
+            .HasMaxLength(64)
+            .IsRequired();
+
         builder.HasKey(g => g.Id);
 
         builder
@@ -32,7 +36,6 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
 
         builder
             .Property(g => g.LastModifiedBy)
-            .HasColumnName("ModifiedBy")
             .HasMaxLength(450);
 
         builder
@@ -41,12 +44,10 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
 
         builder
             .Property(g => g.CreatedOnUtc)
-            .HasColumnName("CreatedAt")
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         builder
-            .Property(g => g.LastModifiedOnUtc)
-            .HasColumnName("ModifiedAt");
+            .Property(g => g.LastModifiedOnUtc);
 
         // Indexes
         builder.HasIndex(g => g.Name);

@@ -26,18 +26,18 @@ public sealed class UpgradeTenantCommandHandlerTests
     {
         // Arrange
         var tenantId = "tenant-1";
-        var extendedExpiryDate = DateTime.UtcNow.AddYears(1);
-        var command = new UpgradeTenantCommand(tenantId, extendedExpiryDate);
+        var extendedExpiryOnUtc = DateTimeOffset.UtcNow.AddYears(1);
+        var command = new UpgradeTenantCommand(tenantId, extendedExpiryOnUtc);
 
-        _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryDate, Arg.Any<CancellationToken>())
-            .Returns(extendedExpiryDate);
+        _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryOnUtc, Arg.Any<CancellationToken>())
+            .Returns(extendedExpiryOnUtc);
 
         // Act
         await _sut.Handle(command, CancellationToken.None);
 
         // Assert
         await _tenantService.Received(1)
-            .UpgradeSubscriptionAsync(tenantId, extendedExpiryDate, Arg.Any<CancellationToken>());
+            .UpgradeSubscriptionAsync(tenantId, extendedExpiryOnUtc, Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -45,11 +45,11 @@ public sealed class UpgradeTenantCommandHandlerTests
     {
         // Arrange
         var tenantId = "tenant-1";
-        var extendedExpiryDate = DateTime.UtcNow.AddYears(1);
-        var returnedValidity = extendedExpiryDate.AddDays(1); // Service might adjust the date
-        var command = new UpgradeTenantCommand(tenantId, extendedExpiryDate);
+        var extendedExpiryOnUtc = DateTimeOffset.UtcNow.AddYears(1);
+        var returnedValidity = extendedExpiryOnUtc.AddDays(1); // Service might adjust the date
+        var command = new UpgradeTenantCommand(tenantId, extendedExpiryOnUtc);
 
-        _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryDate, Arg.Any<CancellationToken>())
+        _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryOnUtc, Arg.Any<CancellationToken>())
             .Returns(returnedValidity);
 
         // Act
@@ -58,7 +58,7 @@ public sealed class UpgradeTenantCommandHandlerTests
         // Assert
         result.ShouldNotBeNull();
         result.Tenant.ShouldBe(tenantId);
-        result.NewValidity.ShouldBe(returnedValidity);
+        result.NewValidityOnUtc.ShouldBe(returnedValidity);
     }
 
     [Fact]
@@ -74,19 +74,19 @@ public sealed class UpgradeTenantCommandHandlerTests
     {
         // Arrange
         var tenantId = "tenant-1";
-        var extendedExpiryDate = DateTime.UtcNow.AddYears(1);
-        var command = new UpgradeTenantCommand(tenantId, extendedExpiryDate);
+        var extendedExpiryOnUtc = DateTimeOffset.UtcNow.AddYears(1);
+        var command = new UpgradeTenantCommand(tenantId, extendedExpiryOnUtc);
         using var cts = new CancellationTokenSource();
         var token = cts.Token;
 
-        _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryDate, token)
-            .Returns(extendedExpiryDate);
+        _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryOnUtc, token)
+            .Returns(extendedExpiryOnUtc);
 
         // Act
         await _sut.Handle(command, token);
 
         // Assert
-        await _tenantService.Received(1).UpgradeSubscriptionAsync(tenantId, extendedExpiryDate, token);
+        await _tenantService.Received(1).UpgradeSubscriptionAsync(tenantId, extendedExpiryOnUtc, token);
     }
 
     #endregion
@@ -98,7 +98,7 @@ public sealed class UpgradeTenantCommandHandlerTests
     {
         // Arrange
         var tenantId = "tenant-1";
-        var pastDate = DateTime.UtcNow.AddDays(-30);
+        var pastDate = DateTimeOffset.UtcNow.AddDays(-30);
         var command = new UpgradeTenantCommand(tenantId, pastDate);
 
         _tenantService.UpgradeSubscriptionAsync(tenantId, pastDate, Arg.Any<CancellationToken>())
@@ -108,7 +108,7 @@ public sealed class UpgradeTenantCommandHandlerTests
         var result = await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        result.NewValidity.ShouldBe(pastDate);
+        result.NewValidityOnUtc.ShouldBe(pastDate);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public sealed class UpgradeTenantCommandHandlerTests
     {
         // Arrange
         var tenantId = "tenant-1";
-        var futureDate = DateTime.UtcNow.AddYears(10);
+        var futureDate = DateTimeOffset.UtcNow.AddYears(10);
         var command = new UpgradeTenantCommand(tenantId, futureDate);
 
         _tenantService.UpgradeSubscriptionAsync(tenantId, futureDate, Arg.Any<CancellationToken>())
@@ -126,7 +126,7 @@ public sealed class UpgradeTenantCommandHandlerTests
         var result = await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        result.NewValidity.ShouldBe(futureDate);
+        result.NewValidityOnUtc.ShouldBe(futureDate);
     }
 
     #endregion

@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 
 namespace FSH.Modules.Auditing.Contracts;
 
@@ -9,8 +9,8 @@ namespace FSH.Modules.Auditing.Contracts;
 public sealed class AuditEnvelope : IAuditEvent
 {
     public Guid Id { get; }
-    public DateTime OccurredAtUtc { get; }
-    public DateTime ReceivedAtUtc { get; }
+    public DateTimeOffset OccurredOnUtc { get; }
+    public DateTimeOffset ReceivedOnUtc { get; }
 
     public AuditEventType EventType { get; }
     public AuditSeverity Severity { get; }
@@ -31,8 +31,8 @@ public sealed class AuditEnvelope : IAuditEvent
 
     public AuditEnvelope(
         Guid id,
-        DateTime occurredAtUtc,
-        DateTime receivedAtUtc,
+        DateTimeOffset occurredOnUtc,
+        DateTimeOffset receivedOnUtc,
         AuditEventType eventType,
         AuditSeverity severity,
         string? tenantId,
@@ -47,8 +47,8 @@ public sealed class AuditEnvelope : IAuditEvent
         object payload)
     {
         Id = id;
-        OccurredAtUtc = occurredAtUtc.Kind == DateTimeKind.Utc ? occurredAtUtc : occurredAtUtc.ToUniversalTime();
-        ReceivedAtUtc = receivedAtUtc.Kind == DateTimeKind.Utc ? receivedAtUtc : receivedAtUtc.ToUniversalTime();
+        OccurredOnUtc = occurredOnUtc.ToUniversalTime();
+        ReceivedOnUtc = receivedOnUtc.ToUniversalTime();
         EventType = eventType;
         Severity = severity;
         TenantId = tenantId;

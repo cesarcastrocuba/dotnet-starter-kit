@@ -29,8 +29,8 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
         await ValidateRoleIdsAsync(command.RoleIds, cancellationToken);
 
         var userId = _currentUser.GetUserId().ToString();
-        group.Update(command.Name, command.Description, userId);
-        group.SetAsDefault(command.IsDefault, userId);
+        group.Update(command.Name, command.Description);
+        group.SetAsDefault(command.IsDefault);
 
         var newRoleIds = UpdateRoleAssignments(group, command.RoleIds);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -89,7 +89,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
 
         foreach (var roleId in newRoleIds.Where(id => !currentRoleIds.Contains(id)))
         {
-            group.GroupRoles.Add(GroupRole.Create(group.Id, roleId));
+            group.GroupRoles.Add(GroupRole.Create(group.Id, roleId, group.TenantId));
         }
 
         return newRoleIds;

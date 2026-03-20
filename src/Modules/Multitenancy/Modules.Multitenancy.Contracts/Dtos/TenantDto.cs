@@ -1,4 +1,4 @@
-﻿namespace FSH.Modules.Multitenancy.Contracts.Dtos;
+namespace FSH.Modules.Multitenancy.Contracts.Dtos;
 
 public sealed class TenantDto
 {
@@ -7,6 +7,6 @@ public sealed class TenantDto
     public string? ConnectionString { get; set; }
     public string AdminEmail { get; set; } = default!;
     public bool IsActive { get; set; }
-    public DateTime ValidUpto { get; set; }
+    public DateTimeOffset ValidUptoOnUtc { get; set; }
     public string? Issuer { get; set; }
 }

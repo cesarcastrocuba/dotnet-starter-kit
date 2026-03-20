@@ -12,8 +12,8 @@ public sealed class GetSecurityAuditsQuery : IQuery<IReadOnlyList<AuditSummaryDt
 
     public string? TenantId { get; init; }
 
-    public DateTime? FromUtc { get; init; }
+    public DateTimeOffset? FromOnUtc { get; init; }
 
-    public DateTime? ToUtc { get; init; }
+    public DateTimeOffset? ToOnUtc { get; init; }
 }
 

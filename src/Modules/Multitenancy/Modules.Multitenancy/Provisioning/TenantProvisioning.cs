@@ -16,11 +16,9 @@ public sealed class TenantProvisioning : BaseEntity<Guid>
 
     public string? JobId { get; private set; }
 
-    public DateTime CreatedUtc { get; private set; } = DateTime.UtcNow;
-
-    public DateTime? StartedUtc { get; private set; }
-
-    public DateTime? CompletedUtc { get; private set; }
+    public DateTimeOffset CreatedOnUtc { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? StartedOnUtc { get; private set; }
+    public DateTimeOffset? CompletedOnUtc { get; private set; }
 
     public ICollection<TenantProvisioningStep> Steps { get; private set; } = new List<TenantProvisioningStep>();
 
@@ -33,7 +31,7 @@ public sealed class TenantProvisioning : BaseEntity<Guid>
         Id = Guid.NewGuid();
         TenantId = tenantId;
         CorrelationId = correlationId;
-        CreatedUtc = DateTime.UtcNow;
+        CreatedOnUtc = DateTimeOffset.UtcNow;
     }
 
     public void SetJobId(string jobId) => JobId = jobId;
@@ -41,14 +39,14 @@ public sealed class TenantProvisioning : BaseEntity<Guid>
     public void MarkRunning(string step)
     {
         Status = TenantProvisioningStatus.Running;
-        StartedUtc ??= DateTime.UtcNow;
+        StartedOnUtc ??= DateTimeOffset.UtcNow;
         CurrentStep = step;
     }
 
     public void MarkCompleted()
     {
         Status = TenantProvisioningStatus.Completed;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedOnUtc = DateTimeOffset.UtcNow;
         CurrentStep = null;
         Error = null;
     }
@@ -58,6 +56,6 @@ public sealed class TenantProvisioning : BaseEntity<Guid>
         Status = TenantProvisioningStatus.Failed;
         CurrentStep = step;
         Error = error;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedOnUtc = DateTimeOffset.UtcNow;
     }
 }

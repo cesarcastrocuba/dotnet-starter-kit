@@ -1,4 +1,4 @@
-﻿using FSH.Modules.Identity.Authorization.Jwt;
+using FSH.Modules.Identity.Authorization.Jwt;
 using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Services;
 using Microsoft.Extensions.Logging;
@@ -34,19 +34,19 @@ public sealed class TokenService : ITokenService
         var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
         // Access token
-        var accessTokenExpiry = DateTime.UtcNow.AddMinutes(_options.AccessTokenMinutes);
+        var accessTokenExpiry = DateTimeOffset.UtcNow.AddMinutes(_options.AccessTokenMinutes);
         var jwtToken = new JwtSecurityToken(
             _options.Issuer,
             _options.Audience,
             claims,
-            expires: accessTokenExpiry,
+            expires: accessTokenExpiry.UtcDateTime,
             signingCredentials: creds);
 
         var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
         // Refresh token
         var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenDays);
+        var refreshTokenExpiry = DateTimeOffset.UtcNow.AddDays(_options.RefreshTokenDays);
 
         var userEmail = claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).First();
         if (_logger.IsEnabled(LogLevel.Information))
@@ -58,8 +58,8 @@ public sealed class TokenService : ITokenService
         var response = new TokenResponse(
             AccessToken: accessToken,
             RefreshToken: refreshToken,
-            RefreshTokenExpiresAt: refreshTokenExpiry,
-            AccessTokenExpiresAt: accessTokenExpiry);
+            RefreshTokenExpiresOnUtc: refreshTokenExpiry,
+            AccessTokenExpiresOnUtc: accessTokenExpiry);
 
         return Task.FromResult(response);
     }

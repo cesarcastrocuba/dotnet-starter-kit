@@ -8,8 +8,8 @@ public sealed class GetSecurityAuditsQueryValidator : AbstractValidator<GetSecur
     public GetSecurityAuditsQueryValidator()
     {
         RuleFor(q => q)
-            .Must(q => !q.FromUtc.HasValue || !q.ToUtc.HasValue || q.FromUtc <= q.ToUtc)
-            .WithMessage("FromUtc must be less than or equal to ToUtc.");
+            .Must(q => !q.FromOnUtc.HasValue || !q.ToOnUtc.HasValue || q.FromOnUtc <= q.ToOnUtc)
+            .WithMessage("FromOnUtc must be less than or equal to ToOnUtc.");
     }
 }
 

@@ -79,7 +79,7 @@ public sealed class RabbitMqEventBus : IEventBus, IAsyncDisposable
                 var properties = new BasicProperties
                 {
                     MessageId = @event.Id.ToString(),
-                    Timestamp = new AmqpTimestamp(new DateTimeOffset(@event.OccurredOnUtc).ToUnixTimeSeconds()),
+                    Timestamp = new AmqpTimestamp(@event.OccurredOnUtc.ToUnixTimeSeconds()),
                     ContentType = "application/json",
                     DeliveryMode = DeliveryModes.Persistent,
                     CorrelationId = @event.CorrelationId,

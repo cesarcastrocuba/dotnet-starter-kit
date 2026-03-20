@@ -35,7 +35,7 @@ public sealed class ChangeTenantActivationCommandHandler : ICommandHandler<Chang
         {
             TenantId = status.Id,
             IsActive = status.IsActive,
-            ValidUpto = status.ValidUpto,
+            ValidUptoOnUtc = status.ValidUptoOnUtc,
             Message = message
         };
     }

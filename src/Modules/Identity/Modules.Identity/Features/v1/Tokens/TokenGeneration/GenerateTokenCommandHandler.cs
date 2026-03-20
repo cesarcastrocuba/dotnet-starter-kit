@@ -89,7 +89,7 @@ public sealed class GenerateTokenCommandHandler
         var token = await _tokenService.IssueAsync(subject, claims, /*extra*/ null, cancellationToken);
 
         // Persist refresh token (hashed) for this user
-        await _identityService.StoreRefreshTokenAsync(subject, token.RefreshToken, token.RefreshTokenExpiresAt, cancellationToken);
+        await _identityService.StoreRefreshTokenAsync(subject, token.RefreshToken, token.RefreshTokenExpiresOnUtc, cancellationToken);
 
         // Create user session for session management (non-blocking, fail gracefully)
         try
@@ -100,7 +100,7 @@ public sealed class GenerateTokenCommandHandler
                 refreshTokenHash,
                 ip,
                 ua,
-                token.RefreshTokenExpiresAt,
+                token.RefreshTokenExpiresOnUtc,
                 cancellationToken);
         }
         catch (Exception ex)
@@ -117,7 +117,7 @@ public sealed class GenerateTokenCommandHandler
             userName: claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? request.Email,
             clientId: clientId!,
             tokenFingerprint: fingerprint,
-            expiresUtc: token.AccessTokenExpiresAt,
+            expiresOnUtc: token.AccessTokenExpiresOnUtc,
             ct: cancellationToken);
 
         // 4) Enqueue integration event for token generation (sample event for testing eventing)
@@ -126,7 +126,7 @@ public sealed class GenerateTokenCommandHandler
 
         var integrationEvent = new TokenGeneratedIntegrationEvent(
             Id: Guid.NewGuid(),
-            OccurredOnUtc: DateTime.UtcNow,
+            OccurredOnUtc: DateTimeOffset.UtcNow,
             TenantId: tenantId,
             CorrelationId: correlationId,
             Source: "Identity",
@@ -136,7 +136,7 @@ public sealed class GenerateTokenCommandHandler
             IpAddress: ip,
             UserAgent: ua,
             TokenFingerprint: fingerprint,
-            AccessTokenExpiresAtUtc: token.AccessTokenExpiresAt);
+            AccessTokenExpiresOnUtc: token.AccessTokenExpiresOnUtc);
 
         await _outboxStore.AddAsync(integrationEvent, cancellationToken).ConfigureAwait(false);
 

@@ -16,5 +16,9 @@ public class TenantProvisioningConfiguration : IEntityTypeConfiguration<TenantPr
         builder.HasMany(p => p.Steps)
             .WithOne(s => s.Provisioning!)
             .HasForeignKey(s => s.ProvisioningId);
+
+        builder.Property(x => x.TenantId)
+            .HasMaxLength(64)
+            .IsRequired();
     }
 }

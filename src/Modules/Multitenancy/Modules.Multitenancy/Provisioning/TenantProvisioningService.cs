@@ -77,7 +77,7 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
         return await _dbContext.Set<TenantProvisioning>()
             .Include(p => p.Steps)
             .Where(p => p.TenantId == tenantId)
-            .OrderByDescending(p => p.CreatedUtc)
+            .OrderByDescending(p => p.CreatedOnUtc)
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
     }
@@ -201,8 +201,8 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
             .Select(s => new TenantProvisioningStepDto(
                 s.Step.ToString(),
                 s.Status.ToString(),
-                s.StartedUtc,
-                s.CompletedUtc,
+                s.StartedOnUtc,
+                s.CompletedOnUtc,
                 s.Error))
             .ToArray();
 
@@ -212,9 +212,9 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
             provisioning.CorrelationId,
             provisioning.CurrentStep,
             provisioning.Error,
-            provisioning.CreatedUtc,
-            provisioning.StartedUtc,
-            provisioning.CompletedUtc,
+            provisioning.CreatedOnUtc,
+            provisioning.StartedOnUtc,
+            provisioning.CompletedOnUtc,
             steps);
     }
 }

@@ -32,7 +32,7 @@ public sealed class DeleteGroupCommandHandler : ICommandHandler<DeleteGroupComma
         }
 
         // Soft delete via domain method
-        group.Delete(_currentUser.GetUserId().ToString());
+        group.Delete();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

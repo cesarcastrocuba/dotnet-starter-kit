@@ -31,7 +31,7 @@ public sealed class EfCoreInboxStore<TDbContext> : IInboxStore
             EventType = eventType,
             HandlerName = handlerName,
             TenantId = tenantId,
-            ProcessedOnUtc = DateTime.UtcNow
+            ProcessedOnUtc = DateTimeOffset.UtcNow
         };
 
         await _dbContext.Set<InboxMessage>().AddAsync(message, ct).ConfigureAwait(false);

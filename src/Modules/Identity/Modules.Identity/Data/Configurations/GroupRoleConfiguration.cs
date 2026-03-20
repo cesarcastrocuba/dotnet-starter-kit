@@ -17,6 +17,10 @@ public class GroupRoleConfiguration : IEntityTypeConfiguration<GroupRole>
 
         builder.HasKey(gr => new { gr.GroupId, gr.RoleId });
 
+        builder.Property(x => x.TenantId)
+            .HasMaxLength(64)
+            .IsRequired();
+
         builder
             .Property(gr => gr.RoleId)
             .IsRequired()

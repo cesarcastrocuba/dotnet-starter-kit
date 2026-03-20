@@ -27,6 +27,8 @@ public class TenantDbContext : EFCoreStoreDbContext<AppTenantInfo>
 
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.HasDefaultSchema(Schema);
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantDbContext).Assembly);
     }
 }

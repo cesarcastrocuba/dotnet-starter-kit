@@ -24,14 +24,14 @@ public sealed class GetAuditsQueryHandler : IQueryHandler<GetAuditsQuery, PagedR
 
         IQueryable<AuditRecord> audits = _dbContext.AuditRecords.AsNoTracking();
 
-        if (query.FromUtc.HasValue)
+        if (query.FromOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc >= query.FromUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc >= query.FromOnUtc.Value);
         }
 
-        if (query.ToUtc.HasValue)
+        if (query.ToOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc <= query.ToUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc <= query.ToOnUtc.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(query.TenantId))
@@ -84,12 +84,12 @@ public sealed class GetAuditsQueryHandler : IQueryHandler<GetAuditsQuery, PagedR
                 (a.UserName != null && EF.Functions.ILike(a.UserName, $"%{term}%")));
         }
 
-        audits = audits.OrderByDescending(a => a.OccurredAtUtc);
+        audits = audits.OrderByDescending(a => a.OccurredOnUtc);
 
         IQueryable<AuditSummaryDto> projected = audits.Select(a => new AuditSummaryDto
         {
             Id = a.Id,
-            OccurredAtUtc = a.OccurredAtUtc,
+            OccurredOnUtc = a.OccurredOnUtc,
             EventType = (AuditEventType)a.EventType,
             Severity = (AuditSeverity)a.Severity,
             TenantId = a.TenantId,
