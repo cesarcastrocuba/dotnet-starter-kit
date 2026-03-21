@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FSH.Playground.Migrations.PostgreSQL.Identity
 {
     /// <inheritdoc />
-    public partial class Identity_TemporalStandardization_Fix : Migration
+    public partial class IdentityTemporalStandardizationFix : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
