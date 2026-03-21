@@ -15,7 +15,6 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
     private readonly TimeProvider _timeProvider;
 
     [ThreadStatic]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("SonarScanner.CSharp", "S2696:Remove this set, which updates a 'static' field from an instance method.", Justification = "Recursion guard using ThreadStatic")]
     private static bool _isSaving;
 
     public AuditableEntitySaveChangesInterceptor(ICurrentUser currentUser, TimeProvider timeProvider)
@@ -24,6 +23,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
         _timeProvider = timeProvider;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("SonarScanner.CSharp", "S2696:Remove this set, which updates a 'static' field from an instance method.", Justification = "Recursion guard using ThreadStatic")]
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
@@ -47,6 +47,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("SonarScanner.CSharp", "S2696:Remove this set, which updates a 'static' field from an instance method.", Justification = "Recursion guard using ThreadStatic")]
     public override InterceptionResult<int> SavingChanges(
         DbContextEventData eventData,
         InterceptionResult<int> result)

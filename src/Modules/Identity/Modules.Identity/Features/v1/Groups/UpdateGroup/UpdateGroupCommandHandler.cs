@@ -12,12 +12,10 @@ namespace FSH.Modules.Identity.Features.v1.Groups.UpdateGroup;
 public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupCommand, GroupDto>
 {
     private readonly IdentityDbContext _dbContext;
-    private readonly ICurrentUser _currentUser;
 
-    public UpdateGroupCommandHandler(IdentityDbContext dbContext, ICurrentUser currentUser)
+    public UpdateGroupCommandHandler(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
-        _currentUser = currentUser;
     }
 
     public async ValueTask<GroupDto> Handle(UpdateGroupCommand command, CancellationToken cancellationToken)
