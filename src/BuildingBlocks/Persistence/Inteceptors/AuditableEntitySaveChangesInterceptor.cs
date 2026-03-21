@@ -15,6 +15,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
     private readonly TimeProvider _timeProvider;
 
     [ThreadStatic]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("SonarScanner.CSharp", "S2696:Remove this set, which updates a 'static' field from an instance method.", Justification = "Recursion guard using ThreadStatic")]
     private static bool _isSaving;
 
     public AuditableEntitySaveChangesInterceptor(ICurrentUser currentUser, TimeProvider timeProvider)
@@ -28,6 +29,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(eventData);
         if (_isSaving)
         {
             return await base.SavingChangesAsync(eventData, result, cancellationToken);
@@ -49,6 +51,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
         DbContextEventData eventData,
         InterceptionResult<int> result)
     {
+        ArgumentNullException.ThrowIfNull(eventData);
         if (_isSaving)
         {
             return base.SavingChanges(eventData, result);
@@ -76,7 +79,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
         foreach (var entry in context.ChangeTracker.Entries())
         {
             // Auditable Entities
-            if (entry.Entity is IAuditableEntity auditable)
+            if (entry.Entity is IAuditableEntity)
             {
                 if (entry.State == EntityState.Added)
                 {
@@ -91,7 +94,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
             }
 
             // Soft Deletable Entities
-            if (entry.Entity is ISoftDeletable softDeletable && entry.State == EntityState.Deleted)
+            if (entry.Entity is ISoftDeletable && entry.State == EntityState.Deleted)
             {
                 entry.State = EntityState.Modified;
                 entry.Property(nameof(ISoftDeletable.IsDeleted)).CurrentValue = true;
@@ -104,9 +107,12 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 
 public static class Extensions
 {
-    public static bool HasChangedOwnedEntities(this Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry) =>
-        entry.References.Any(r =>
+    public static bool HasChangedOwnedEntities(this Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        return entry.References.Any(r =>
             r.TargetEntry != null &&
             r.TargetEntry.Metadata.IsOwned() &&
             (r.TargetEntry.State == EntityState.Added || r.TargetEntry.State == EntityState.Modified));
+    }
 }

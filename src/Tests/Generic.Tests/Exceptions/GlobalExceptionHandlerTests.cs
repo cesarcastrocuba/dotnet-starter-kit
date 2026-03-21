@@ -26,11 +26,11 @@ public class GlobalExceptionHandlerTests
     public async Task TryHandleAsync_Should_IncludeTenantAndUserInLogs()
     {
         // Arrange
-        var context = new DefaultHttpContext();
+        var context = new DefaultHttpContext { Request = { Path = "/test" } };
         var services = Substitute.For<IServiceProvider>();
         context.RequestServices = services;
         
-        var exception = new Exception("Test exception");
+        var exception = new InvalidOperationException("Test exception");
         var cancellationToken = CancellationToken.None;
 
         var tenantInfo = new AppTenantInfo { Id = "test-tenant" };
@@ -51,7 +51,9 @@ public class GlobalExceptionHandlerTests
         result.ShouldBeTrue();
         context.Response.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
 
-        // Verify logger was called with tenant and user info
-        _logger.ReceivedWithAnyArgs().LogError(default);
+        // Verify logger was called
+#pragma warning disable CA2254
+        _logger.ReceivedWithAnyArgs().LogError(default!);
+#pragma warning restore CA2254
     }
 }

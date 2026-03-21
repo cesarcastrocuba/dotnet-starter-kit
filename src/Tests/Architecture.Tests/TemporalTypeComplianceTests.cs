@@ -40,7 +40,7 @@ public class TemporalTypeComplianceTests
             foreach (var type in types)
             {
                 // Skip some infrastructure/system types if necessary
-                if (type.FullName?.StartsWith("System.") == true) continue;
+                if (type.FullName?.StartsWith("System.", StringComparison.Ordinal) == true) continue;
                 if (type.IsInterface) continue;
 
                 var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -77,7 +77,7 @@ public class TemporalTypeComplianceTests
                 foreach (var prop in properties)
                 {
                     // If the property has a temporal nature and ends with Utc but doesn't follow OnUtc
-                    if (prop.Name.EndsWith("Utc") && !prop.Name.EndsWith("OnUtc"))
+                    if (prop.Name.EndsWith("Utc", StringComparison.Ordinal) && !prop.Name.EndsWith("OnUtc", StringComparison.Ordinal))
                     {
                         // Some exceptions might be needed for library-defined names if any, 
                         // but for our domain/contracts we want OnUtc.

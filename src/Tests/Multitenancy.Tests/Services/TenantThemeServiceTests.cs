@@ -34,10 +34,8 @@ public class TenantThemeServiceTests
 
         var storageService = Substitute.For<IStorageService>();
         var logger = Substitute.For<ILogger<TenantThemeService>>();
-        var currentUser = Substitute.For<ICurrentUser>();
-        currentUser.GetUserId().Returns(Guid.NewGuid());
 
-        var service = new TenantThemeService(cache, dbContext, tenantAccessor, storageService, logger, currentUser);
+        var service = new TenantThemeService(cache, dbContext, tenantAccessor, storageService, logger);
 
         // Act
         await service.ResetThemeAsync("test-tenant", CancellationToken.None);

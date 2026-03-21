@@ -1,11 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
 {
     /// <inheritdoc />
-    public partial class Multitenancy_ValidUptoStandardization : Migration
+    public partial class MultitenancyValidUptoStandardization : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

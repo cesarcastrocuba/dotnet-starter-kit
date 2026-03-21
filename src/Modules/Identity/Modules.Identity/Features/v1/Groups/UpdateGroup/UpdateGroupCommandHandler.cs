@@ -28,7 +28,6 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
         await ValidateUniqueNameAsync(command.Id, command.Name, cancellationToken);
         await ValidateRoleIdsAsync(command.RoleIds, cancellationToken);
 
-        var userId = _currentUser.GetUserId().ToString();
         group.Update(command.Name, command.Description);
         group.SetAsDefault(command.IsDefault);
 

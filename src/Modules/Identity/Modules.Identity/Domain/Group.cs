@@ -12,15 +12,15 @@ public class Group : BaseEntity<Guid>, IAuditableEntity, ISoftDeletable, IHasTen
     public bool IsSystemGroup { get; private set; }
 
     // IAuditableEntity implementation
-    public DateTimeOffset CreatedOnUtc { get; private set; }
+    public DateTimeOffset CreatedOnUtc { get; internal set; }
     public string? CreatedBy { get; private set; }
-    public DateTimeOffset? LastModifiedOnUtc { get; private set; }
-    public string? LastModifiedBy { get; private set; }
+    public DateTimeOffset? LastModifiedOnUtc { get; internal set; }
+    public string? LastModifiedBy { get; internal set; }
 
     // ISoftDeletable implementation
     public bool IsDeleted { get; private set; }
-    public DateTimeOffset? DeletedOnUtc { get; private set; }
-    public string? DeletedBy { get; private set; }
+    public DateTimeOffset? DeletedOnUtc { get; internal set; }
+    public string? DeletedBy { get; internal set; }
 
     // Navigation properties
     public virtual ICollection<GroupRole> GroupRoles { get; private set; } = [];
