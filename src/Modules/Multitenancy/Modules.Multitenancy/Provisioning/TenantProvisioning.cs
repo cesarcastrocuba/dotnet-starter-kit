@@ -2,7 +2,7 @@ using FSH.Framework.Core.Domain;
 
 namespace FSH.Modules.Multitenancy.Provisioning;
 
-public sealed class TenantProvisioning : BaseEntity<Guid>
+public sealed class TenantProvisioning : BaseEntity<Guid>, IHasTenant
 {
     public string TenantId { get; private set; } = default!;
 

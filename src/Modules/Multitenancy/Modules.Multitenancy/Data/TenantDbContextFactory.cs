@@ -1,3 +1,5 @@
+using Finbuckle.MultiTenant.Abstractions;
+using FSH.Framework.Shared.Multitenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +8,12 @@ namespace FSH.Modules.Multitenancy.Data;
 
 public sealed class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantDbContext>
 {
+    private sealed class DesignTimeAccessor : IMultiTenantContextAccessor<AppTenantInfo>
+    {
+        public IMultiTenantContext<AppTenantInfo> MultiTenantContext { get; set; } = null!;
+        IMultiTenantContext IMultiTenantContextAccessor.MultiTenantContext => MultiTenantContext;
+    }
+
     public TenantDbContext CreateDbContext(string[] args)
     {
         // Design-time factory: read configuration (appsettings + env vars) to decide provider and connection.
@@ -34,6 +42,6 @@ public sealed class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantD
                 throw new NotSupportedException($"Database provider '{provider}' is not supported for TenantDbContext migrations.");
         }
 
-        return new TenantDbContext(optionsBuilder.Options);
+        return new TenantDbContext(optionsBuilder.Options, new DesignTimeAccessor());
     }
 }

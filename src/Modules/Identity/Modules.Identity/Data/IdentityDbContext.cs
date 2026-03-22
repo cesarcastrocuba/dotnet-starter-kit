@@ -25,7 +25,7 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
     IdentityUserPasskey<string>>
 {
     private readonly DatabaseOptions _settings;
-    private new AppTenantInfo TenantInfo { get; set; }
+    private readonly IMultiTenantContextAccessor<AppTenantInfo> _multiTenantContextAccessor;
     private readonly IHostEnvironment _environment;
     
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
@@ -53,8 +53,10 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
 
         _environment = environment;
         _settings = settings.Value;
-        TenantInfo = multiTenantContextAccessor.MultiTenantContext?.TenantInfo!;
+        _multiTenantContextAccessor = multiTenantContextAccessor;
     }
+
+    private AppTenantInfo? CurrentTenant => _multiTenantContextAccessor.MultiTenantContext?.TenantInfo;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -75,11 +77,13 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!string.IsNullOrWhiteSpace(TenantInfo?.ConnectionString))
+        ArgumentNullException.ThrowIfNull(optionsBuilder);
+
+        if (!string.IsNullOrWhiteSpace(CurrentTenant?.ConnectionString))
         {
             optionsBuilder.ConfigureHeroDatabase(
                 _settings.Provider,
-                TenantInfo.ConnectionString,
+                CurrentTenant.ConnectionString,
                 _settings.MigrationsAssembly,
                 _environment.IsDevelopment());
         }
