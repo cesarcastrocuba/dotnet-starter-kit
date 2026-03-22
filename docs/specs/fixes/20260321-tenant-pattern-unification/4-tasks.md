@@ -15,9 +15,9 @@
 - [ ] Modify `src/Modules/Multitenancy/Modules.Multitenancy/Data/Configurations/TenantProvisioningStepConfiguration.cs`: Add `.IsMultiTenant()`.
 
 ## 3. Verification & Polish
-- [ ] Run and pass Architecture tests.
-- [ ] Run and pass Integration tests.
-- [ ] Run and pass Functional tests.
-- [ ] Ensure 0 build warnings (`dotnet build src/FSH.Framework.slnx`).
-- [ ] Create implementation report (`5-implement.md`).
-- [ ] Create walkthrough (`6-walkthrough.md`).
+- [x] Run and pass Architecture tests.
+- [x] Run and pass Integration tests.
+- [x] Run and pass Functional tests.
+- [x] Ensure 0 build warnings (`dotnet build src/FSH.Framework.slnx`).
+- [x] Create implementation report (`5-implement.md`).
+- [x] Create walkthrough (`6-walkthrough.md`).
