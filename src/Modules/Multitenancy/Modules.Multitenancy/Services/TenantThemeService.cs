@@ -160,6 +160,7 @@ public sealed class TenantThemeService : ITenantThemeService
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(t => t.TenantId == tenantId, ct)
             .ConfigureAwait(false);
 
@@ -193,6 +194,7 @@ public sealed class TenantThemeService : ITenantThemeService
 
         // Clear existing default
         var existingDefault = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(t => t.IsDefault, ct)
             .ConfigureAwait(false);
 
@@ -203,6 +205,7 @@ public sealed class TenantThemeService : ITenantThemeService
 
         // Set new default
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(t => t.TenantId == tenantId, ct)
             .ConfigureAwait(false);
 
@@ -232,6 +235,7 @@ public sealed class TenantThemeService : ITenantThemeService
     private async Task<TenantThemeDto?> LoadThemeFromDbAsync(string tenantId, CancellationToken ct)
     {
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.TenantId == tenantId, ct)
             .ConfigureAwait(false);
@@ -242,6 +246,7 @@ public sealed class TenantThemeService : ITenantThemeService
     private async Task<TenantThemeDto?> LoadDefaultThemeFromDbAsync(CancellationToken ct)
     {
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.IsDefault, ct)
             .ConfigureAwait(false);

@@ -47,10 +47,10 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
         var correlationId = Guid.NewGuid().ToString();
         var provisioning = new TenantProvisioning(tenant.Id, correlationId);
 
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.Database));
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.Migrations));
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.Seeding));
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.CacheWarm));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.Database));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.Migrations));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.Seeding));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.CacheWarm));
 
         _dbContext.Add(provisioning);
         await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -75,6 +75,7 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
     public async Task<TenantProvisioning?> GetLatestAsync(string tenantId, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<TenantProvisioning>()
+            .IgnoreQueryFilters()
             .Include(p => p.Steps)
             .Where(p => p.TenantId == tenantId)
             .OrderByDescending(p => p.CreatedOnUtc)
@@ -168,6 +169,7 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
     private async Task<TenantProvisioning> RequireAsync(string tenantId, string correlationId, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<TenantProvisioning>()
+            .IgnoreQueryFilters()
             .Include(p => p.Steps)
             .FirstOrDefaultAsync(p => p.TenantId == tenantId && p.CorrelationId == correlationId, cancellationToken)
             .ConfigureAwait(false)

@@ -3,8 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FSH.Modules.Multitenancy.Provisioning;
 
-public sealed class TenantProvisioningStep : BaseEntity<Guid>
+public sealed class TenantProvisioningStep : BaseEntity<Guid>, IHasTenant
 {
+    public string TenantId { get; private set; } = default!;
     public Guid ProvisioningId { get; private set; }
 
     public TenantProvisioningStepName Step { get; private set; }
@@ -24,10 +25,11 @@ public sealed class TenantProvisioningStep : BaseEntity<Guid>
     {
     }
 
-    public TenantProvisioningStep(Guid provisioningId, TenantProvisioningStepName step)
+    public TenantProvisioningStep(Guid provisioningId, string tenantId, TenantProvisioningStepName step)
     {
         Id = Guid.NewGuid();
         ProvisioningId = provisioningId;
+        TenantId = tenantId;
         Step = step;
     }
 

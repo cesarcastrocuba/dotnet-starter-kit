@@ -2,6 +2,7 @@ using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Multitenancy.Provisioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Finbuckle.MultiTenant.EntityFrameworkCore.Extensions;
 
 namespace FSH.Modules.Multitenancy.Data.Configurations;
 
@@ -12,6 +13,8 @@ public class TenantProvisioningConfiguration : IEntityTypeConfiguration<TenantPr
         ArgumentNullException.ThrowIfNull(builder);
 
         builder.ToTable("TenantProvisionings", MultitenancyConstants.Schema);
+
+        builder.IsMultiTenant();
 
         builder.HasMany(p => p.Steps)
             .WithOne(s => s.Provisioning!)

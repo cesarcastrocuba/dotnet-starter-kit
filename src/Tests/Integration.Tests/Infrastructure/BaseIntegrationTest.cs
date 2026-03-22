@@ -10,10 +10,12 @@ public abstract class BaseIntegrationTest : IClassFixture<CustomWebApplicationFa
 {
     protected ISender Mediator { get; }
     protected IServiceScope Scope { get; }
+    protected CustomWebApplicationFactory Factory { get; }
 
     protected BaseIntegrationTest(CustomWebApplicationFactory factory)
     {
         ArgumentNullException.ThrowIfNull(factory);
+        Factory = factory;
         Scope = factory.Services.CreateScope();
         Mediator = Scope.ServiceProvider.GetRequiredService<ISender>();
     }
@@ -21,4 +23,3 @@ public abstract class BaseIntegrationTest : IClassFixture<CustomWebApplicationFa
 
 [CollectionDefinition("Integration")]
 public class IntegrationFixture : ICollectionFixture<CustomWebApplicationFactory> { }
-

@@ -80,11 +80,22 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
         LogContext.PushProperty("exception_statusCode", problemDetails.Status);
         LogContext.PushProperty("exception_stackTrace", exception.StackTrace);
 
-        logger.LogError("Exception at {Path} (Tenant: {TenantId}, User: {UserId}) - {Detail}",
-            httpContext.Request.Path,
-            tenantId ?? "None",
-            userId == Guid.Empty ? "Anonymous" : userId.ToString(),
-            problemDetails.Detail);
+        if (statusCode >= 500)
+        {
+            logger.LogError(exception, "Server exception at {Path} (Tenant: {TenantId}, User: {UserId}) - {Detail}",
+                httpContext.Request.Path,
+                tenantId ?? "None",
+                userId == Guid.Empty ? "Anonymous" : userId.ToString(),
+                problemDetails.Detail);
+        }
+        else
+        {
+            logger.LogWarning("Client exception at {Path} (Tenant: {TenantId}, User: {UserId}) - {Detail}",
+                httpContext.Request.Path,
+                tenantId ?? "None",
+                userId == Guid.Empty ? "Anonymous" : userId.ToString(),
+                problemDetails.Detail);
+        }
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
         return true;
