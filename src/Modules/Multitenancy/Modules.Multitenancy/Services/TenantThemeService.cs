@@ -21,14 +21,14 @@ public sealed class TenantThemeService : ITenantThemeService
     private const string DefaultThemeCacheKey = "theme:default";
     private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
 
-    private readonly ICacheService _cache;
+    private readonly ITenantCacheService _cache;
     private readonly TenantDbContext _dbContext;
     private readonly IMultiTenantContextAccessor<AppTenantInfo> _tenantAccessor;
     private readonly IStorageService _storageService;
     private readonly ILogger<TenantThemeService> _logger;
 
     public TenantThemeService(
-        ICacheService cache,
+        ITenantCacheService cache,
         TenantDbContext dbContext,
         IMultiTenantContextAccessor<AppTenantInfo> tenantAccessor,
         IStorageService storageService,
@@ -52,7 +52,7 @@ public sealed class TenantThemeService : ITenantThemeService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        var cacheKey = $"{CacheKeyPrefix}{tenantId}";
+        var cacheKey = CacheKeyPrefix;
 
         var theme = await _cache.GetOrSetAsync(
             cacheKey,
@@ -173,7 +173,7 @@ public sealed class TenantThemeService : ITenantThemeService
 
         await InvalidateCacheAsync(tenantId, ct).ConfigureAwait(false);
         // Also invalidate default cache in case this tenant was the default
-        await _cache.RemoveItemAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
+        await _cache.RemoveAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
 
         if (_logger.IsEnabled(LogLevel.Information))
         {
@@ -218,7 +218,7 @@ public sealed class TenantThemeService : ITenantThemeService
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
         // Invalidate default theme cache
-        await _cache.RemoveItemAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
+        await _cache.RemoveAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
 
         if (_logger.IsEnabled(LogLevel.Information))
         {
@@ -228,8 +228,8 @@ public sealed class TenantThemeService : ITenantThemeService
 
     public async Task InvalidateCacheAsync(string tenantId, CancellationToken ct = default)
     {
-        var cacheKey = $"{CacheKeyPrefix}{tenantId}";
-        await _cache.RemoveItemAsync(cacheKey, ct).ConfigureAwait(false);
+        var cacheKey = CacheKeyPrefix;
+        await _cache.RemoveAsync(cacheKey, ct).ConfigureAwait(false);
     }
 
     private async Task<TenantThemeDto?> LoadThemeFromDbAsync(string tenantId, CancellationToken ct)

@@ -26,21 +26,21 @@ public class TenantThemeServiceTests
     public async Task ResetThemeAsync_ShouldInvalidateDefaultThemeCache()
     {
         // Arrange
-        var cache = Substitute.For<ICacheService>();
-        
+        var cache = Substitute.For<ITenantCacheService>();
+
         // Use SQLite in-memory for testing to follow project rules and avoid InMemoryDatabase issues
         using var connection = new SqliteConnection("DataSource=:memory:");
         await connection.OpenAsync();
-        
+
         var options = new DbContextOptionsBuilder<TenantDbContext>()
             .UseSqlite(connection)
             .Options;
-            
+
         // Use a simple test accessor class to avoid NSubstitute/EF Core expression issues
         var tenantAccessor = new TestAccessor();
         var tenantInfo = new AppTenantInfo("test-tenant", "Test", null, "test@test.com", null);
         tenantAccessor.MultiTenantContext = new MultiTenantContext<AppTenantInfo>(tenantInfo);
-        
+
         using (var dbContext = new TenantDbContext(options, tenantAccessor))
         {
             await dbContext.Database.EnsureCreatedAsync();
@@ -62,12 +62,10 @@ public class TenantThemeServiceTests
             var service = new TenantThemeService(cache, dbContext, tenantAccessor, storageService, logger);
 
             // Act
-            // ResetThemeAsync now uses .IgnoreQueryFilters() so it should find the record regardless of global filter
             await service.ResetThemeAsync("test-tenant", CancellationToken.None);
 
-            // Assert
-            // CACHE-2: Assert that DefaultThemeCacheKey ("theme:default") was invalidated
-            await cache.Received(1).RemoveItemAsync("theme:default", Arg.Any<CancellationToken>());
+            // Assert: DefaultThemeCacheKey ("theme:default") was invalidated via ITenantCacheService
+            await cache.Received(1).RemoveAsync("theme:default", Arg.Any<CancellationToken>());
         }
     }
 }
