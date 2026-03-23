@@ -29,6 +29,11 @@ public static class PersistenceExtensions
             .ValidateDataAnnotations()
             .Validate(o => !string.IsNullOrWhiteSpace(o.Provider), "DatabaseOptions.Provider is required.")
             .ValidateOnStart();
+
+        // IMPORTANT: DatabasePrecreatorHostedService MUST be registered before any IDbInitializer
+        // hosted services. IHostedService implementations execute in DI registration order.
+        // This ensures the target database exists before EF Core MigrateAsync() is called.
+        services.AddHostedService<DatabasePrecreatorHostedService>();
         services.AddHostedService<DatabaseOptionsStartupLogger>();
         services.AddPersistenceServices();
         return services;
