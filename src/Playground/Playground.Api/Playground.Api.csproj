@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\Modules\Identity\Modules.Identity\Modules.Identity.csproj" />
     <ProjectReference Include="..\..\Modules\Multitenancy\Modules.Multitenancy\Modules.Multitenancy.csproj" />
     <ProjectReference Include="..\Migrations.PostgreSQL\Migrations.PostgreSQL.csproj" />
+    <ProjectReference Include="..\Migrations.MSSQL\Migrations.MSSQL.csproj" />
   </ItemGroup>
 
   <ItemGroup>
