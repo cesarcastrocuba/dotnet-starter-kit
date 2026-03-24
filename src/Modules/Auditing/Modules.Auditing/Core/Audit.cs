@@ -115,7 +115,7 @@ public static class Audit
         private string? _requestId;
         private string? _source;
         private AuditTag _tags = AuditTag.None;
-        private DateTime _occurredAtUtc = DateTime.UtcNow;
+        private DateTimeOffset _occurredOnUtc = DateTimeOffset.UtcNow;
 
         internal Builder(AuditEventType eventType, AuditSeverity severity, object payload)
         {
@@ -132,7 +132,8 @@ public static class Audit
         public Builder WithRequestId(string? requestId) { _requestId = requestId; return this; }
         public Builder WithSource(string? source) { _source = source; return this; }
         public Builder WithTags(AuditTag tags) { _tags |= tags; return this; }
-        public Builder At(DateTime utc) { _occurredAtUtc = utc.Kind == DateTimeKind.Utc ? utc : utc.ToUniversalTime(); return this; }
+        public Builder At(DateTimeOffset utc) { _occurredOnUtc = utc; return this; }
+        public Builder At(DateTime utc) { _occurredOnUtc = utc.Kind == DateTimeKind.Utc ? utc : utc.ToUniversalTime(); return this; }
 
         // Typed updaters --------------------------------------------------------
 
@@ -171,8 +172,8 @@ public static class Audit
         {
             var env = new AuditEnvelope(
                 id: Guid.CreateVersion7(),
-                occurredAtUtc: _occurredAtUtc,
-                receivedAtUtc: DateTime.UtcNow,
+                occurredOnUtc: _occurredOnUtc,
+                receivedOnUtc: DateTimeOffset.UtcNow,
                 eventType: _type,
                 severity: _severity,
                 tenantId: _tenantId,

@@ -72,8 +72,8 @@ public sealed class GenerateTokenCommandHandlerTests
         var expectedToken = new TokenResponse(
             AccessToken: _fixture.Create<string>(),
             RefreshToken: _fixture.Create<string>(),
-            RefreshTokenExpiresAt: DateTime.UtcNow.AddDays(7),
-            AccessTokenExpiresAt: DateTime.UtcNow.AddHours(1));
+            RefreshTokenExpiresOnUtc: DateTimeOffset.UtcNow.AddDays(7),
+            AccessTokenExpiresOnUtc: DateTimeOffset.UtcNow.AddHours(1));
 
         _requestContext.IpAddress.Returns("192.168.1.1");
         _requestContext.UserAgent.Returns("TestAgent");
@@ -92,8 +92,8 @@ public sealed class GenerateTokenCommandHandlerTests
         result.ShouldNotBeNull();
         result.AccessToken.ShouldBe(expectedToken.AccessToken);
         result.RefreshToken.ShouldBe(expectedToken.RefreshToken);
-        result.RefreshTokenExpiresAt.ShouldBe(expectedToken.RefreshTokenExpiresAt);
-        result.AccessTokenExpiresAt.ShouldBe(expectedToken.AccessTokenExpiresAt);
+        result.RefreshTokenExpiresOnUtc.ShouldBe(expectedToken.RefreshTokenExpiresOnUtc);
+        result.AccessTokenExpiresOnUtc.ShouldBe(expectedToken.AccessTokenExpiresOnUtc);
     }
 
     [Fact]
@@ -125,9 +125,9 @@ public sealed class GenerateTokenCommandHandlerTests
         // Assert
         await _identityService.Received(1).ValidateCredentialsAsync(command.Email, command.Password, Arg.Any<CancellationToken>());
         await _tokenService.Received(1).IssueAsync(userId, claims, null, Arg.Any<CancellationToken>());
-        await _identityService.Received(1).StoreRefreshTokenAsync(userId, token.RefreshToken, token.RefreshTokenExpiresAt, Arg.Any<CancellationToken>());
+        await _identityService.Received(1).StoreRefreshTokenAsync(userId, token.RefreshToken, token.RefreshTokenExpiresOnUtc, Arg.Any<CancellationToken>());
         await _securityAudit.Received(1).LoginSucceededAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
-        await _securityAudit.Received(1).TokenIssuedAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<CancellationToken>());
+        await _securityAudit.Received(1).TokenIssuedAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>());
         await _outboxStore.Received(1).AddAsync(Arg.Any<FSH.Framework.Eventing.Abstractions.IIntegrationEvent>(), Arg.Any<CancellationToken>());
     }
 
@@ -222,7 +222,7 @@ public sealed class GenerateTokenCommandHandlerTests
         // Assert
         await _identityService.Received(1).ValidateCredentialsAsync(command.Email, command.Password, cancellationToken);
         await _tokenService.Received(1).IssueAsync(userId, claims, null, cancellationToken);
-        await _identityService.Received(1).StoreRefreshTokenAsync(userId, token.RefreshToken, token.RefreshTokenExpiresAt, cancellationToken);
+        await _identityService.Received(1).StoreRefreshTokenAsync(userId, token.RefreshToken, token.RefreshTokenExpiresOnUtc, cancellationToken);
         await _outboxStore.Received(1).AddAsync(Arg.Any<FSH.Framework.Eventing.Abstractions.IIntegrationEvent>(), cancellationToken);
     }
 
@@ -249,7 +249,7 @@ public sealed class GenerateTokenCommandHandlerTests
         _tokenService.IssueAsync(userId, claims, null, Arg.Any<CancellationToken>())
             .Returns(token);
 
-        _sessionService.CreateSessionAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTime>(), Arg.Any<CancellationToken>())
+        _sessionService.CreateSessionAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<DateTimeOffset>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new InvalidOperationException("Database not available"));
 
         // Act

@@ -17,7 +17,7 @@ internal sealed class GetTenantsSpecification : Specification<AppTenantInfo, Ten
             ["connectionstring"] = t => t.ConnectionString!,
             ["adminemail"] = t => t.AdminEmail!,
             ["isactive"] = t => t.IsActive,
-            ["validupto"] = t => t.ValidUpto,
+            ["validupto"] = t => t.ValidUptoOnUtc,
             ["issuer"] = t => t.Issuer!
         };
 
@@ -33,7 +33,7 @@ internal sealed class GetTenantsSpecification : Specification<AppTenantInfo, Ten
             ConnectionString = t.ConnectionString,
             AdminEmail = t.AdminEmail!,
             IsActive = t.IsActive,
-            ValidUpto = t.ValidUpto,
+            ValidUptoOnUtc = t.ValidUptoOnUtc,
             Issuer = t.Issuer
         });
 

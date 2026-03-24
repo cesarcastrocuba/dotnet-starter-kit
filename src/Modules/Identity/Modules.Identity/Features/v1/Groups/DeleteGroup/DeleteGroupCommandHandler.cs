@@ -10,12 +10,10 @@ namespace FSH.Modules.Identity.Features.v1.Groups.DeleteGroup;
 public sealed class DeleteGroupCommandHandler : ICommandHandler<DeleteGroupCommand, Unit>
 {
     private readonly IdentityDbContext _dbContext;
-    private readonly ICurrentUser _currentUser;
 
-    public DeleteGroupCommandHandler(IdentityDbContext dbContext, ICurrentUser currentUser)
+    public DeleteGroupCommandHandler(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
-        _currentUser = currentUser;
     }
 
     public async ValueTask<Unit> Handle(DeleteGroupCommand command, CancellationToken cancellationToken)
@@ -32,7 +30,7 @@ public sealed class DeleteGroupCommandHandler : ICommandHandler<DeleteGroupComma
         }
 
         // Soft delete via domain method
-        group.Delete(_currentUser.GetUserId().ToString());
+        group.Delete();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

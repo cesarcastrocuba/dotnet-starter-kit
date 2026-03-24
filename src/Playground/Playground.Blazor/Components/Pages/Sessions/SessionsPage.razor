@@ -113,19 +113,19 @@
                     <MudText Typo="Typo.body2" Style="font-family: monospace;">@context.Item.IpAddress</MudText>
                 </CellTemplate>
             </PropertyColumn>
-            <TemplateColumn Title="Last Activity" Sortable="true" SortBy="@(x => x.LastActivityAt)">
+            <TemplateColumn Title="Last Activity" Sortable="true" SortBy="@(x => x.LastActivityOnUtc)">
                 <CellTemplate>
                     <MudStack Spacing="0">
-                        <MudText Typo="Typo.body2">@FormatRelativeTime(context.Item.LastActivityAt)</MudText>
-                        <MudText Typo="Typo.caption" Class="text-muted">@context.Item.LastActivityAt.ToString("MMM dd, yyyy HH:mm")</MudText>
+                        <MudText Typo="Typo.body2">@FormatRelativeTime(context.Item.LastActivityOnUtc)</MudText>
+                        <MudText Typo="Typo.caption" Class="text-muted">@context.Item.LastActivityOnUtc.ToString("MMM dd, yyyy HH:mm")</MudText>
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn Title="Created" Sortable="true" SortBy="@(x => x.CreatedAt)">
+            <TemplateColumn Title="Created" Sortable="true" SortBy="@(x => x.CreatedOnUtc)">
                 <CellTemplate>
                     <MudStack Spacing="0">
-                        <MudText Typo="Typo.body2">@FormatRelativeTime(context.Item.CreatedAt)</MudText>
-                        <MudText Typo="Typo.caption" Class="text-muted">@context.Item.CreatedAt.ToString("MMM dd, yyyy HH:mm")</MudText>
+                        <MudText Typo="Typo.body2">@FormatRelativeTime(context.Item.CreatedOnUtc)</MudText>
+                        <MudText Typo="Typo.caption" Class="text-muted">@context.Item.CreatedOnUtc.ToString("MMM dd, yyyy HH:mm")</MudText>
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>

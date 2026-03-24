@@ -53,8 +53,8 @@ public sealed class ChannelAuditPublisher : IAuditPublisher
 
         return new AuditEnvelope(
             id: Guid.CreateVersion7(),
-            occurredAtUtc: auditEvent.OccurredAtUtc,
-            receivedAtUtc: DateTime.UtcNow,
+            occurredOnUtc: auditEvent.OccurredOnUtc,
+            receivedOnUtc: DateTimeOffset.UtcNow,
             eventType: auditEvent.EventType,
             severity: auditEvent.Severity,
             tenantId: auditEvent.TenantId,
@@ -81,8 +81,8 @@ public sealed class ChannelAuditPublisher : IAuditPublisher
 
         return new AuditEnvelope(
             id: env.Id,
-            occurredAtUtc: env.OccurredAtUtc,
-            receivedAtUtc: env.ReceivedAtUtc,
+            occurredOnUtc: env.OccurredOnUtc,
+            receivedOnUtc: env.ReceivedOnUtc,
             eventType: env.EventType,
             severity: env.Severity,
             tenantId: needsTenantBackfill ? scope.TenantId : env.TenantId,

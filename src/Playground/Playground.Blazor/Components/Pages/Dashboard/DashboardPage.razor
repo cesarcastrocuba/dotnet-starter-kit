@@ -49,7 +49,7 @@
                 <MudTh>Correlation</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Timestamp">@context.OccurredAtUtc.ToLocalTime()</MudTd>
+                <MudTd DataLabel="Timestamp">@context.OccurredOnUtc.ToLocalTime()</MudTd>
                 <MudTd DataLabel="Event Type">@context.EventType</MudTd>
                 <MudTd DataLabel="User">@context.UserName</MudTd>
                 <MudTd DataLabel="Correlation">@context.CorrelationId</MudTd>

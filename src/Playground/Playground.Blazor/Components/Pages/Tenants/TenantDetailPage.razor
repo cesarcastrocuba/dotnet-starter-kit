@@ -137,23 +137,23 @@ else
                     </MudStack>
                     <MudStack Row="true" Justify="Justify.SpaceBetween">
                         <MudText Typo="Typo.body2" Class="text-muted">Valid Until</MudText>
-                        <MudText Typo="Typo.body2" Class="fw-600">@_tenant.ValidUpto.ToString("MMMM dd, yyyy")</MudText>
+                        <MudText Typo="Typo.body2" Class="fw-600">@_tenant.ValidUptoOnUtc.ToString("MMMM dd, yyyy")</MudText>
                     </MudStack>
                     <MudStack Row="true" Justify="Justify.SpaceBetween">
                         <MudText Typo="Typo.body2" Class="text-muted">Time Remaining</MudText>
-                        <MudText Typo="Typo.body2" Class="fw-600" Color="@GetExpiryColor(_tenant.ValidUpto)">
-                            @GetExpiryText(_tenant.ValidUpto)
+                        <MudText Typo="Typo.body2" Class="fw-600" Color="@GetExpiryColor(_tenant.ValidUptoOnUtc)">
+                            @GetExpiryText(_tenant.ValidUptoOnUtc)
                         </MudText>
                     </MudStack>
                 </MudStack>
 
-                @if (IsExpiringSoon(_tenant.ValidUpto))
+                @if (IsExpiringSoon(_tenant.ValidUptoOnUtc))
                 {
                     <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Dense="true" Class="mt-3">
                         This tenant's subscription is expiring soon. Consider upgrading.
                     </MudAlert>
                 }
-                else if (IsExpired(_tenant.ValidUpto))
+                else if (IsExpired(_tenant.ValidUptoOnUtc))
                 {
                     <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Dense="true" Class="mt-3">
                         This tenant's subscription has expired.
@@ -244,18 +244,18 @@ else
                                 <MudText Typo="Typo.body2" Class="fw-600">@_provisioningStatus.CurrentStep</MudText>
                             </MudStack>
                         }
-                        @if (_provisioningStatus.StartedUtc.HasValue)
+                        @if (_provisioningStatus.StartedOnUtc.HasValue)
                         {
                             <MudStack Row="true" Justify="Justify.SpaceBetween">
                                 <MudText Typo="Typo.body2" Class="text-muted">Started</MudText>
-                                <MudText Typo="Typo.body2">@_provisioningStatus.StartedUtc.Value.LocalDateTime.ToString("g")</MudText>
+                                <MudText Typo="Typo.body2">@_provisioningStatus.StartedOnUtc.Value.LocalDateTime.ToString("g")</MudText>
                             </MudStack>
                         }
-                        @if (_provisioningStatus.CompletedUtc.HasValue)
+                        @if (_provisioningStatus.CompletedOnUtc.HasValue)
                         {
                             <MudStack Row="true" Justify="Justify.SpaceBetween">
                                 <MudText Typo="Typo.body2" Class="text-muted">Completed</MudText>
-                                <MudText Typo="Typo.body2">@_provisioningStatus.CompletedUtc.Value.LocalDateTime.ToString("g")</MudText>
+                                <MudText Typo="Typo.body2">@_provisioningStatus.CompletedOnUtc.Value.LocalDateTime.ToString("g")</MudText>
                             </MudStack>
                         }
                         @if (!string.IsNullOrEmpty(_provisioningStatus.Error))
@@ -550,7 +550,7 @@ else
             Name = _tenant.Name,
             AdminEmail = _tenant.AdminEmail,
             IsActive = _tenant.IsActive,
-            ValidUpto = _tenant.ValidUpto,
+            ValidUptoOnUtc = _tenant.ValidUptoOnUtc,
             Issuer = _tenant.Issuer
         };
 

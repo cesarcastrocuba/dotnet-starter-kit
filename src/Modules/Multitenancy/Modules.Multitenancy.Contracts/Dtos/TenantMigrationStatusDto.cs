@@ -8,7 +8,7 @@ public sealed class TenantMigrationStatusDto
 
     public bool IsActive { get; set; }
 
-    public DateTime? ValidUpto { get; set; }
+    public DateTimeOffset? ValidUptoOnUtc { get; set; }
 
     public bool HasPendingMigrations { get; set; }
 

@@ -15,15 +15,12 @@ internal sealed class UserPermissionService(
     UserManager<FshUser> userManager,
     RoleManager<FshRole> roleManager,
     IdentityDbContext db,
-    ICacheService cache,
-    IMultiTenantContextAccessor<AppTenantInfo> tenantAccessor) : IUserPermissionService
+    ITenantCacheService cache) : IUserPermissionService
 {
     public async Task<List<string>?> GetPermissionsAsync(string userId, CancellationToken cancellationToken)
     {
-        var tenantId = tenantAccessor.MultiTenantContext?.TenantInfo?.Id ?? throw new InvalidOperationException("Tenant context required.");
-
         var permissions = await cache.GetOrSetAsync(
-            GetPermissionCacheKey(tenantId, userId),
+            GetPermissionCacheKey(userId),
             async () =>
             {
                 var user = await userManager.FindByIdAsync(userId);
@@ -43,14 +40,14 @@ internal sealed class UserPermissionService(
                 }
                 return permissions.Distinct().ToList();
             },
-            cancellationToken: cancellationToken);
+            ct: cancellationToken);
 
         return permissions;
     }
 
-    public static string GetPermissionCacheKey(string tenantId, string userId)
+    public static string GetPermissionCacheKey(string userId)
     {
-        return $"perm:{tenantId}:{userId}";
+        return $"perm:{userId}";
     }
 
     public async Task<bool> HasPermissionAsync(string userId, string permission, CancellationToken cancellationToken = default)
@@ -62,7 +59,6 @@ internal sealed class UserPermissionService(
 
     public Task InvalidatePermissionCacheAsync(string userId, CancellationToken cancellationToken)
     {
-        var tenantId = tenantAccessor.MultiTenantContext?.TenantInfo?.Id ?? throw new InvalidOperationException("Tenant context required.");
-        return cache.RemoveItemAsync(GetPermissionCacheKey(tenantId, userId), cancellationToken);
+        return cache.RemoveAsync(GetPermissionCacheKey(userId), cancellationToken);
     }
 }

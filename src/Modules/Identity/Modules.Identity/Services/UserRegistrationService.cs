@@ -226,7 +226,7 @@ internal sealed class UserRegistrationService(
 
         foreach (var group in defaultGroups)
         {
-            db.UserGroups.Add(UserGroup.Create(user.Id, group.Id, source));
+            db.UserGroups.Add(UserGroup.Create(user.Id, group.Id, source, user.TenantId));
         }
 
         if (defaultGroups.Count > 0)
@@ -263,7 +263,7 @@ internal sealed class UserRegistrationService(
 
         var integrationEvent = new UserRegisteredIntegrationEvent(
             Id: Guid.NewGuid(),
-            OccurredOnUtc: DateTime.UtcNow,
+            OccurredOnUtc: DateTimeOffset.UtcNow,
             TenantId: tenantId,
             CorrelationId: Guid.NewGuid().ToString(),
             Source: source,

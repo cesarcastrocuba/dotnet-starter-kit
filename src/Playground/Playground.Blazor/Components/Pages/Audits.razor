@@ -263,7 +263,7 @@
               Breakpoint="Breakpoint.Sm"
               Elevation="0">
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortLabel="OccurredAtUtc" T="FSH.Playground.Blazor.ApiClient.AuditSummaryDto">Timestamp</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="OccurredOnUtc" T="FSH.Playground.Blazor.ApiClient.AuditSummaryDto">Timestamp</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="EventType" T="FSH.Playground.Blazor.ApiClient.AuditSummaryDto">Event Type</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="Severity" T="FSH.Playground.Blazor.ApiClient.AuditSummaryDto">Severity</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortLabel="UserName" T="FSH.Playground.Blazor.ApiClient.AuditSummaryDto">User</MudTableSortLabel></MudTh>
@@ -276,10 +276,10 @@
             <MudTd DataLabel="Timestamp">
                 <MudStack Spacing="0">
                     <MudText Typo="Typo.body2" Class="fw-600">
-                        @context.OccurredAtUtc.ToLocalTime().ToString("MMM dd, yyyy")
+                        @context.OccurredOnUtc.ToLocalTime().ToString("MMM dd, yyyy")
                     </MudText>
                     <MudText Typo="Typo.caption" Class="text-muted">
-                        @context.OccurredAtUtc.ToLocalTime().ToString("HH:mm:ss")
+                        @context.OccurredOnUtc.ToLocalTime().ToString("HH:mm:ss")
                     </MudText>
                 </MudStack>
             </MudTd>
@@ -386,15 +386,15 @@
                                                         <MudDivider />
                                                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                                                             <MudText Typo="Typo.body2" Class="text-muted">Occurred At:</MudText>
-                                                            <MudText Typo="Typo.body2">@detail.OccurredAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.fff")</MudText>
+                                                            <MudText Typo="Typo.body2">@detail.OccurredOnUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.fff")</MudText>
                                                         </MudStack>
                                                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                                                             <MudText Typo="Typo.body2" Class="text-muted">Received At:</MudText>
-                                                            <MudText Typo="Typo.body2">@detail.ReceivedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.fff")</MudText>
+                                                            <MudText Typo="Typo.body2">@detail.ReceivedOnUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss.fff")</MudText>
                                                         </MudStack>
                                                         <MudStack Row="true" Justify="Justify.SpaceBetween">
                                                             <MudText Typo="Typo.body2" Class="text-muted">Latency:</MudText>
-                                                            <MudText Typo="Typo.body2">@((detail.ReceivedAtUtc - detail.OccurredAtUtc).TotalMilliseconds.ToString("F2")) ms</MudText>
+                                                            <MudText Typo="Typo.body2">@((detail.ReceivedOnUtc - detail.OccurredOnUtc).TotalMilliseconds.ToString("F2")) ms</MudText>
                                                         </MudStack>
                                                     </MudStack>
                                                 </MudCardContent>
@@ -567,12 +567,12 @@
         else if (_relatedEvents.Any())
         {
             <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
-                @foreach (var evt in _relatedEvents.OrderBy(e => e.OccurredAtUtc))
+                @foreach (var evt in _relatedEvents.OrderBy(e => e.OccurredOnUtc))
                 {
                     <MudTimelineItem Color="@EventTypeColor(evt.EventType)" Size="Size.Small">
                         <ItemOpposite>
                             <MudText Typo="Typo.body2" Class="text-muted">
-                                @evt.OccurredAtUtc.ToLocalTime().ToString("HH:mm:ss.fff")
+                                @evt.OccurredOnUtc.ToLocalTime().ToString("HH:mm:ss.fff")
                             </MudText>
                         </ItemOpposite>
                         <ItemContent>
@@ -643,7 +643,7 @@
     private FilterDto _filter = new();
     private MudTable<FSH.Playground.Blazor.ApiClient.AuditSummaryDto>? _table;
     private IReadOnlyList<FSH.Playground.Blazor.ApiClient.AuditSummaryDto> _currentPage = Array.Empty<FSH.Playground.Blazor.ApiClient.AuditSummaryDto>();
-    private TableState _lastState = new() { SortLabel = "OccurredAtUtc", SortDirection = SortDirection.Descending, PageSize = 25 };
+    private TableState _lastState = new() { SortLabel = "OccurredOnUtc", SortDirection = SortDirection.Descending, PageSize = 25 };
     private int _pageSize = 25;
     private bool _loading;
     private int _totalCount;
@@ -679,8 +679,8 @@
         try
         {
             _summary = await AuditsClient.SummaryAsync(
-                fromUtc: _filter.FromUtc,
-                toUtc: _filter.ToUtc,
+                fromOnUtc: _filter.FromOnUtc,
+                toOnUtc: _filter.ToOnUtc,
                 tenantId: string.IsNullOrWhiteSpace(_filter.TenantId) ? null : _filter.TenantId);
         }
         catch (Exception ex)
@@ -708,8 +708,8 @@
                 pageNumber: state.Page + 1,
                 pageSize: Math.Min(state.PageSize, ApiPageSizeLimit),
                 sort: sort,
-                fromUtc: _filter.FromUtc,
-                toUtc: _filter.ToUtc,
+                fromOnUtc: _filter.FromOnUtc,
+                toOnUtc: _filter.ToOnUtc,
                 tenantId: string.IsNullOrWhiteSpace(_filter.TenantId) ? null : _filter.TenantId,
                 userId: _filter.Actor,
                 eventType: _filter.EventType.HasValue ? (int)_filter.EventType.Value : null,
@@ -840,8 +840,8 @@
         {
             var events = await AuditsClient.ByCorrelationAsync(
                 correlationId: correlationId,
-                fromUtc: _filter.FromUtc,
-                toUtc: _filter.ToUtc);
+                fromOnUtc: _filter.FromOnUtc,
+                toOnUtc: _filter.ToOnUtc);
 
             _relatedEvents = events?.ToList() ?? new List<FSH.Playground.Blazor.ApiClient.AuditSummaryDto>();
         }
@@ -870,8 +870,8 @@
         {
             var events = await AuditsClient.ByTraceAsync(
                 traceId: traceId,
-                fromUtc: _filter.FromUtc,
-                toUtc: _filter.ToUtc);
+                fromOnUtc: _filter.FromOnUtc,
+                toOnUtc: _filter.ToOnUtc);
 
             _relatedEvents = events?.ToList() ?? new List<FSH.Playground.Blazor.ApiClient.AuditSummaryDto>();
         }
@@ -983,8 +983,8 @@
                     pageNumber: page,
                     pageSize: pageSize,
                     sort: BuildSort(_lastState),
-                    fromUtc: _filter.FromUtc,
-                    toUtc: _filter.ToUtc,
+                    fromOnUtc: _filter.FromOnUtc,
+                    toOnUtc: _filter.ToOnUtc,
                     tenantId: string.IsNullOrWhiteSpace(_filter.TenantId) ? null : _filter.TenantId,
                     userId: _filter.Actor,
                     eventType: _filter.EventType.HasValue ? (int)_filter.EventType.Value : null,
@@ -1030,11 +1030,11 @@
     private static byte[] BuildCsv(IEnumerable<FSH.Playground.Blazor.ApiClient.AuditSummaryDto> items)
     {
         var sb = new StringBuilder();
-        sb.AppendLine("OccurredAtUtc,EventType,Severity,UserName,UserId,TenantId,Source,CorrelationId,TraceId");
+        sb.AppendLine("OccurredOnUtc,EventType,Severity,UserName,UserId,TenantId,Source,CorrelationId,TraceId");
         foreach (var item in items)
         {
             sb.AppendLine(string.Join(",",
-                Quote(item.OccurredAtUtc.ToString("o")),
+                Quote(item.OccurredOnUtc.ToString("o")),
                 Quote(FormatEventType(item.EventType)),
                 Quote(FormatSeverity(item.Severity)),
                 Quote(item.UserName),
@@ -1062,7 +1062,7 @@
     {
         if (string.IsNullOrWhiteSpace(state.SortLabel))
         {
-            return "OccurredAtUtc desc";
+            return "OccurredOnUtc desc";
         }
 
         var direction = state.SortDirection == SortDirection.Descending ? "desc" : "asc";
@@ -1119,7 +1119,7 @@
         public string? TraceId { get; set; }
         public string? Search { get; set; }
 
-        public DateTimeOffset? FromUtc
+        public DateTimeOffset? FromOnUtc
         {
             get
             {
@@ -1138,7 +1138,7 @@
             }
         }
 
-        public DateTimeOffset? ToUtc
+        public DateTimeOffset? ToOnUtc
         {
             get
             {

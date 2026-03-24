@@ -181,8 +181,8 @@ public class BuildingBlocksIndependenceTests
         // Shared should only depend on Core
         CheckBuildingBlockDependencies("Shared", ["Core"], layerViolations);
 
-        // Caching should only depend on Core
-        CheckBuildingBlockDependencies("Caching", ["Core"], layerViolations);
+        // Caching depends on Core and Shared (ITenantCacheService uses AppTenantInfo from Shared)
+        CheckBuildingBlockDependencies("Caching", ["Core", "Shared"], layerViolations);
 
         // Mailing should only depend on Core
         CheckBuildingBlockDependencies("Mailing", ["Core"], layerViolations);

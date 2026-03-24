@@ -1,4 +1,4 @@
-﻿namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing.Contracts;
 
 public interface IAuditEvent
 {
@@ -9,7 +9,8 @@ public interface IAuditEvent
     AuditSeverity Severity { get; }
 
     /// <summary>UTC time when the event actually occurred.</summary>
-    DateTime OccurredAtUtc { get; }
+    DateTimeOffset OccurredOnUtc { get; }
+    DateTimeOffset ReceivedOnUtc { get; }
 
     /// <summary>Tenant identifier (optional in per-tenant DBs; still useful for exports).</summary>
     string? TenantId { get; }

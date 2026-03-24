@@ -48,8 +48,8 @@ public sealed class AuditingSaveChangesInterceptor : SaveChangesInterceptor
 
                 var env = new AuditEnvelope(
                     id: Guid.CreateVersion7(),
-                    occurredAtUtc: DateTime.UtcNow,
-                    receivedAtUtc: DateTime.UtcNow,
+                    occurredOnUtc: DateTimeOffset.UtcNow,
+                    receivedOnUtc: DateTimeOffset.UtcNow,
                     eventType: AuditEventType.EntityChange,
                     severity: AuditSeverity.Information,
                     tenantId: null, userId: null, userName: null,

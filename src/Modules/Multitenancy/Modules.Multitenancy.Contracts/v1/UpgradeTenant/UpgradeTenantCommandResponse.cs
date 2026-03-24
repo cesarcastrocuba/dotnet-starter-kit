@@ -1,3 +1,3 @@
-﻿namespace FSH.Modules.Multitenancy.Contracts.v1.UpgradeTenant;
+namespace FSH.Modules.Multitenancy.Contracts.v1.UpgradeTenant;
 
-public sealed record UpgradeTenantCommandResponse(DateTime NewValidity, string Tenant);
+public sealed record UpgradeTenantCommandResponse(DateTimeOffset NewValidityOnUtc, string Tenant);

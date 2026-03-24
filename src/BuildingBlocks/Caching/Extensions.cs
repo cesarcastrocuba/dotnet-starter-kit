@@ -39,6 +39,7 @@ public static class Extensions
             // If no Redis, use memory cache for L2 as well
             services.AddDistributedMemoryCache();
             services.AddTransient<ICacheService, HybridCacheService>();
+            services.AddScoped<ITenantCacheService, TenantCacheService>();
             return services;
         }
 
@@ -59,6 +60,9 @@ public static class Extensions
 
         // Register hybrid cache service
         services.AddTransient<ICacheService, HybridCacheService>();
+
+        // Register tenant cache service
+        services.AddScoped<ITenantCacheService, TenantCacheService>();
 
         return services;
     }

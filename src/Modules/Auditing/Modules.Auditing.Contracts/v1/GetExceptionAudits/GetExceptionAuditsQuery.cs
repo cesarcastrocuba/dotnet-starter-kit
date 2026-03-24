@@ -14,8 +14,8 @@ public sealed class GetExceptionAuditsQuery : IQuery<IReadOnlyList<AuditSummaryD
 
     public string? RouteOrLocation { get; init; }
 
-    public DateTime? FromUtc { get; init; }
+    public DateTimeOffset? FromOnUtc { get; init; }
 
-    public DateTime? ToUtc { get; init; }
+    public DateTimeOffset? ToOnUtc { get; init; }
 }
 

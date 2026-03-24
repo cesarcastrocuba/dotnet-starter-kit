@@ -48,8 +48,8 @@ public sealed class SqlAuditSink : IAuditSink
             var records = group.Select(e => new AuditRecord
             {
                 Id = e.Id,
-                OccurredAtUtc = e.OccurredAtUtc,
-                ReceivedAtUtc = e.ReceivedAtUtc,
+                OccurredOnUtc = e.OccurredOnUtc,
+                ReceivedOnUtc = e.ReceivedOnUtc,
                 EventType = (int)e.EventType,
                 Severity = (byte)e.Severity,
                 TenantId = e.TenantId,

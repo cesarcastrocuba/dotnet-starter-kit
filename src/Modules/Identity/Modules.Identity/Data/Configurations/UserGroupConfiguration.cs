@@ -17,6 +17,10 @@ public class UserGroupConfiguration : IEntityTypeConfiguration<UserGroup>
 
         builder.HasKey(ug => new { ug.UserId, ug.GroupId });
 
+        builder.Property(x => x.TenantId)
+            .HasMaxLength(64)
+            .IsRequired();
+
         builder
             .Property(ug => ug.UserId)
             .IsRequired()
@@ -27,7 +31,7 @@ public class UserGroupConfiguration : IEntityTypeConfiguration<UserGroup>
             .HasMaxLength(450);
 
         builder
-            .Property(ug => ug.AddedAt)
+            .Property(ug => ug.AddedAtOnUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         builder

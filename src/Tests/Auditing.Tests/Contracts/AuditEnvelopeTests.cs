@@ -8,8 +8,8 @@ namespace Auditing.Tests.Contracts;
 public sealed class AuditEnvelopeTests
 {
     private static readonly Guid TestId = Guid.NewGuid();
-    private static readonly DateTime TestOccurredAt = new(2024, 1, 15, 12, 0, 0, DateTimeKind.Utc);
-    private static readonly DateTime TestReceivedAt = new(2024, 1, 15, 12, 0, 1, DateTimeKind.Utc);
+    private static readonly DateTimeOffset TestOccurredAt = new DateTime(2024, 1, 15, 12, 0, 0, DateTimeKind.Utc);
+    private static readonly DateTimeOffset TestReceivedAt = new DateTime(2024, 1, 15, 12, 0, 1, DateTimeKind.Utc);
 
     [Fact]
     public void Constructor_Should_ThrowArgumentNullException_When_PayloadIsNull()
@@ -59,8 +59,8 @@ public sealed class AuditEnvelopeTests
 
         // Assert
         envelope.Id.ShouldBe(TestId);
-        envelope.OccurredAtUtc.ShouldBe(TestOccurredAt);
-        envelope.ReceivedAtUtc.ShouldBe(TestReceivedAt);
+        envelope.OccurredOnUtc.ShouldBe(TestOccurredAt);
+        envelope.ReceivedOnUtc.ShouldBe(TestReceivedAt);
         envelope.EventType.ShouldBe(AuditEventType.Security);
         envelope.Severity.ShouldBe(AuditSeverity.Warning);
         envelope.TenantId.ShouldBe("tenant1");
@@ -94,7 +94,7 @@ public sealed class AuditEnvelopeTests
             payload);
 
         // Assert
-        envelope.OccurredAtUtc.Kind.ShouldBe(DateTimeKind.Utc);
+        envelope.OccurredOnUtc.Offset.ShouldBe(TimeSpan.Zero);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public sealed class AuditEnvelopeTests
             payload);
 
         // Assert
-        envelope.ReceivedAtUtc.Kind.ShouldBe(DateTimeKind.Utc);
+        envelope.ReceivedOnUtc.Offset.ShouldBe(TimeSpan.Zero);
     }
 
     [Fact]
@@ -137,8 +137,8 @@ public sealed class AuditEnvelopeTests
             payload);
 
         // Assert
-        envelope.OccurredAtUtc.ShouldBe(TestOccurredAt);
-        envelope.OccurredAtUtc.Kind.ShouldBe(DateTimeKind.Utc);
+        envelope.OccurredOnUtc.ShouldBe(TestOccurredAt);
+        envelope.OccurredOnUtc.Offset.ShouldBe(TimeSpan.Zero);
     }
 
     [Fact]
@@ -265,7 +265,7 @@ public sealed class AuditEnvelopeTests
                 ["key1"] = "value1",
                 ["key2"] = 123
             },
-            Timestamp = DateTime.UtcNow
+            Timestamp = DateTimeOffset.UtcNow
         };
 
         // Act

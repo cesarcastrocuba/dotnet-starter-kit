@@ -79,7 +79,7 @@ internal sealed class IdentityDbInitializer(
                 ClaimType = ClaimConstants.Permission,
                 ClaimValue = permission.Name,
                 CreatedBy = "application",
-                CreatedOn = timeProvider.GetUtcNow()
+                CreatedOnUtc = timeProvider.GetUtcNow()
             })
             .ToList();
 
@@ -117,6 +117,7 @@ internal sealed class IdentityDbInitializer(
         {
             allUsersGroup = Group.Create(
                 name: allUsersGroupName,
+                tenantId: tenantId,
                 description: "Default group for all users. New users are automatically added to this group.",
                 isDefault: true,
                 isSystemGroup: true,
@@ -138,6 +139,7 @@ internal sealed class IdentityDbInitializer(
         {
             administratorsGroup = Group.Create(
                 name: administratorsGroupName,
+                tenantId: tenantId,
                 description: "System group for administrators with full administrative privileges.",
                 isDefault: false,
                 isSystemGroup: true,
@@ -161,7 +163,7 @@ internal sealed class IdentityDbInitializer(
 
             if (existingGroupRole is null)
             {
-                context.GroupRoles.Add(GroupRole.Create(administratorsGroup.Id, adminRole.Id));
+                context.GroupRoles.Add(GroupRole.Create(administratorsGroup.Id, adminRole.Id, tenantId));
 
                 await context.SaveChangesAsync(cancellationToken);
                 if (logger.IsEnabled(LogLevel.Information))

@@ -1,3 +1,4 @@
+using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Domain;
@@ -27,14 +28,14 @@ public sealed class PasswordExpiryServiceTests
         return new PasswordExpiryService(_userManager, Options.Create(options));
     }
 
-    private static FshUser CreateUser(DateTime lastPasswordChangeDate)
+    private static FshUser CreateUser(DateTimeOffset lastPasswordChangeOnUtc)
     {
         return new FshUser
         {
             Id = Guid.NewGuid().ToString(),
             Email = "test@example.com",
             UserName = "testuser",
-            LastPasswordChangeDate = lastPasswordChangeDate
+            LastPasswordChangeOnUtc = lastPasswordChangeOnUtc
         };
     }
 
@@ -51,7 +52,7 @@ public sealed class PasswordExpiryServiceTests
         // Arrange
         var options = new PasswordPolicyOptions { EnforcePasswordExpiry = false };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-1000)); // Very old password
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-1000)); // Very old password
         SetupUserManager(user);
 
         // Act
@@ -71,7 +72,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryDays = 90
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-91)); // Password changed 91 days ago
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-91)); // Password changed 91 days ago
         SetupUserManager(user);
 
         // Act
@@ -91,7 +92,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryDays = 90
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-89)); // Password changed 89 days ago
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-89)); // Password changed 89 days ago
         SetupUserManager(user);
 
         // Act
@@ -111,7 +112,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryDays = 90
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow);
+        var user = CreateUser(DateTimeOffset.UtcNow);
         SetupUserManager(user);
 
         // Act
@@ -132,7 +133,7 @@ public sealed class PasswordExpiryServiceTests
         };
         var service = CreateService(options);
         // Password changed exactly 90 days and 1 second ago (just past expiry)
-        var user = CreateUser(DateTime.UtcNow.AddDays(-90).AddSeconds(-1));
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-90).AddSeconds(-1));
         SetupUserManager(user);
 
         // Act
@@ -171,7 +172,7 @@ public sealed class PasswordExpiryServiceTests
         // Arrange
         var options = new PasswordPolicyOptions { EnforcePasswordExpiry = false };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-1000));
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-1000));
         SetupUserManager(user);
 
         // Act
@@ -191,7 +192,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryDays = 90
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-80)); // 80 days ago
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-80)); // 80 days ago
         SetupUserManager(user);
 
         // Act
@@ -211,7 +212,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryDays = 90
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-100)); // 100 days ago
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-100)); // 100 days ago
         SetupUserManager(user);
 
         // Act
@@ -231,7 +232,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryDays = 90
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow);
+        var user = CreateUser(DateTimeOffset.UtcNow);
         SetupUserManager(user);
 
         // Act
@@ -270,7 +271,7 @@ public sealed class PasswordExpiryServiceTests
         // Arrange
         var options = new PasswordPolicyOptions { EnforcePasswordExpiry = false };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-85));
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-85));
         SetupUserManager(user);
 
         // Act
@@ -291,7 +292,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-80)); // 10 days until expiry
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-80)); // 10 days until expiry
         SetupUserManager(user);
 
         // Act
@@ -312,7 +313,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-70)); // 20 days until expiry
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-70)); // 20 days until expiry
         SetupUserManager(user);
 
         // Act
@@ -333,7 +334,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-100)); // Already expired
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-100)); // Already expired
         SetupUserManager(user);
 
         // Act
@@ -354,7 +355,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-90)); // Expiring today (0 days)
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-90)); // Expiring today (0 days)
         SetupUserManager(user);
 
         // Act
@@ -399,7 +400,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-100));
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-100));
         SetupUserManager(user);
 
         // Act
@@ -409,7 +410,7 @@ public sealed class PasswordExpiryServiceTests
         result.IsExpired.ShouldBeTrue();
         result.IsExpiringWithinWarningPeriod.ShouldBeFalse();
         result.DaysUntilExpiry.ShouldBeLessThan(0);
-        result.ExpiryDate.ShouldNotBeNull();
+        result.ExpiresOnUtc.ShouldNotBeNull();
         result.Status.ShouldBe("Expired");
     }
 
@@ -424,7 +425,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-80)); // ~10 days until expiry
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-80)); // ~10 days until expiry
         SetupUserManager(user);
 
         // Act
@@ -434,7 +435,7 @@ public sealed class PasswordExpiryServiceTests
         result.IsExpired.ShouldBeFalse();
         result.IsExpiringWithinWarningPeriod.ShouldBeTrue();
         result.DaysUntilExpiry.ShouldBeInRange(9, 10); // TotalDays truncates
-        result.ExpiryDate.ShouldNotBeNull();
+        result.ExpiresOnUtc.ShouldNotBeNull();
         result.Status.ShouldBe("Expiring Soon");
     }
 
@@ -449,7 +450,7 @@ public sealed class PasswordExpiryServiceTests
             PasswordExpiryWarningDays = 14
         };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-30)); // ~60 days until expiry
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-30)); // ~60 days until expiry
         SetupUserManager(user);
 
         // Act
@@ -459,17 +460,17 @@ public sealed class PasswordExpiryServiceTests
         result.IsExpired.ShouldBeFalse();
         result.IsExpiringWithinWarningPeriod.ShouldBeFalse();
         result.DaysUntilExpiry.ShouldBeInRange(59, 60); // TotalDays truncates
-        result.ExpiryDate.ShouldNotBeNull();
+        result.ExpiresOnUtc.ShouldNotBeNull();
         result.Status.ShouldBe("Valid");
     }
 
     [Fact]
-    public async Task GetPasswordExpiryStatusAsync_Should_ReturnNullExpiryDate_When_ExpiryNotEnforced()
+    public async Task GetPasswordExpiryStatusAsync_Should_ReturnNullExpiresOnUtc_When_ExpiryNotEnforced()
     {
         // Arrange
         var options = new PasswordPolicyOptions { EnforcePasswordExpiry = false };
         var service = CreateService(options);
-        var user = CreateUser(DateTime.UtcNow.AddDays(-30));
+        var user = CreateUser(DateTimeOffset.UtcNow.AddDays(-30));
         SetupUserManager(user);
 
         // Act
@@ -479,15 +480,15 @@ public sealed class PasswordExpiryServiceTests
         result.IsExpired.ShouldBeFalse();
         result.IsExpiringWithinWarningPeriod.ShouldBeFalse();
         result.DaysUntilExpiry.ShouldBe(int.MaxValue);
-        result.ExpiryDate.ShouldBeNull();
+        result.ExpiresOnUtc.ShouldBeNull();
         result.Status.ShouldBe("Valid");
     }
 
     [Fact]
-    public async Task GetPasswordExpiryStatusAsync_Should_CalculateCorrectExpiryDate()
+    public async Task GetPasswordExpiryStatusAsync_Should_CalculateCorrectExpiresOnUtc()
     {
         // Arrange
-        var lastChange = new DateTime(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+        var lastChange = new DateTimeOffset(2024, 1, 1, 12, 0, 0, TimeSpan.Zero);
         var options = new PasswordPolicyOptions
         {
             EnforcePasswordExpiry = true,
@@ -501,7 +502,7 @@ public sealed class PasswordExpiryServiceTests
         var result = await service.GetPasswordExpiryStatusAsync(user.Id);
 
         // Assert
-        result.ExpiryDate.ShouldBe(lastChange.AddDays(90));
+        result.ExpiresOnUtc.ShouldBe(lastChange.AddDays(90));
     }
 
     [Fact]
@@ -523,37 +524,37 @@ public sealed class PasswordExpiryServiceTests
         result.IsExpired.ShouldBeFalse();
         result.IsExpiringWithinWarningPeriod.ShouldBeFalse();
         result.DaysUntilExpiry.ShouldBe(int.MaxValue);
-        result.ExpiryDate.ShouldBeNull();
+        result.ExpiresOnUtc.ShouldBeNull();
     }
 
     #endregion
 
-    #region UpdateLastPasswordChangeDateAsync Tests
+    #region UpdateLastPasswordChangeOnUtcAsync Tests
 
     [Fact]
-    public async Task UpdateLastPasswordChangeDateAsync_Should_SetToCurrentUtcTime()
+    public async Task UpdateLastPasswordChangeOnUtcAsync_Should_SetToCurrentUtcTime()
     {
         // Arrange
         var options = new PasswordPolicyOptions();
         var service = CreateService(options);
-        var oldDate = DateTime.UtcNow.AddDays(-100);
+        var oldDate = DateTimeOffset.UtcNow.AddDays(-100);
         var user = CreateUser(oldDate);
         SetupUserManager(user);
         _userManager.UpdateAsync(user).Returns(IdentityResult.Success);
 
         // Act
-        var beforeUpdate = DateTime.UtcNow;
-        await service.UpdateLastPasswordChangeDateAsync(user.Id);
-        var afterUpdate = DateTime.UtcNow;
+        var beforeUpdate = DateTimeOffset.UtcNow;
+        await service.UpdateLastPasswordChangeOnUtcAsync(user.Id);
+        var afterUpdate = DateTimeOffset.UtcNow;
 
         // Assert
-        user.LastPasswordChangeDate.ShouldBeGreaterThanOrEqualTo(beforeUpdate);
-        user.LastPasswordChangeDate.ShouldBeLessThanOrEqualTo(afterUpdate);
+        user.LastPasswordChangeOnUtc.ShouldBeGreaterThanOrEqualTo(beforeUpdate);
+        user.LastPasswordChangeOnUtc.ShouldBeLessThanOrEqualTo(afterUpdate);
         await _userManager.Received(1).UpdateAsync(user);
     }
 
     [Fact]
-    public async Task UpdateLastPasswordChangeDateAsync_Should_DoNothing_When_UserNotFound()
+    public async Task UpdateLastPasswordChangeOnUtcAsync_Should_DoNothing_When_UserNotFound()
     {
         // Arrange
         var options = new PasswordPolicyOptions();
@@ -561,7 +562,7 @@ public sealed class PasswordExpiryServiceTests
         _userManager.FindByIdAsync(Arg.Any<string>()).Returns((FshUser?)null);
 
         // Act
-        await service.UpdateLastPasswordChangeDateAsync("nonexistent-user-id");
+        await service.UpdateLastPasswordChangeOnUtcAsync("nonexistent-user-id");
 
         // Assert
         await _userManager.DidNotReceive().UpdateAsync(Arg.Any<FshUser>());

@@ -5797,7 +5797,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PagedResponseOfAuditSummaryDto> AuditsGetAsync(int? pageNumber = null, int? pageSize = null, string sort = null, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, string tenantId = null, string userId = null, int? eventType = null, int? severity = null, int? tags = null, string source = null, string correlationId = null, string traceId = null, string search = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<PagedResponseOfAuditSummaryDto> AuditsGetAsync(int? pageNumber = null, int? pageSize = null, string sort = null, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, string tenantId = null, string userId = null, int? eventType = null, int? severity = null, int? tags = null, string source = null, string correlationId = null, string traceId = null, string search = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -6058,7 +6058,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<PagedResponseOfAuditSummaryDto> AuditsGetAsync(int? pageNumber = null, int? pageSize = null, string sort = null, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, string tenantId = null, string userId = null, int? eventType = null, int? severity = null, int? tags = null, string source = null, string correlationId = null, string traceId = null, string search = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<PagedResponseOfAuditSummaryDto> AuditsGetAsync(int? pageNumber = null, int? pageSize = null, string sort = null, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, string tenantId = null, string userId = null, int? eventType = null, int? severity = null, int? tags = null, string source = null, string correlationId = null, string traceId = null, string search = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -6086,13 +6086,13 @@ namespace FSH.Playground.Blazor.ApiClient
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("Sort")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(sort, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (fromUtc != null)
+                    if (fromOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("FromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("FromOnUtc")).Append('=').Append(System.Uri.EscapeDataString(fromOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (toUtc != null)
+                    if (toOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("ToUtc")).Append('=').Append(System.Uri.EscapeDataString(toUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("ToOnUtc")).Append('=').Append(System.Uri.EscapeDataString(toOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (tenantId != null)
                     {
@@ -6978,7 +6978,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByCorrelationAsync(string correlationId, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByCorrelationAsync(string correlationId, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -6989,7 +6989,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByTraceAsync(string traceId, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByTraceAsync(string traceId, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -7000,7 +7000,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> SecurityAsync(int? action = null, string userId = null, string tenantId = null, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> SecurityAsync(int? action = null, string userId = null, string tenantId = null, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -7011,7 +7011,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ExceptionsAsync(int? area = null, int? severity = null, string exceptionType = null, string routeOrLocation = null, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ExceptionsAsync(int? area = null, int? severity = null, string exceptionType = null, string routeOrLocation = null, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -7022,7 +7022,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AuditSummaryAggregateDto> SummaryAsync(System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, string tenantId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<AuditSummaryAggregateDto> SummaryAsync(System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, string tenantId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
     }
 
@@ -7067,7 +7067,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByCorrelationAsync(string correlationId, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByCorrelationAsync(string correlationId, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (correlationId == null)
                 throw new System.ArgumentNullException("correlationId");
@@ -7087,13 +7087,13 @@ namespace FSH.Playground.Blazor.ApiClient
                     urlBuilder_.Append("api/v1/audits/by-correlation/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(correlationId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('?');
-                    if (fromUtc != null)
+                    if (fromOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("fromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fromOnUtc")).Append('=').Append(System.Uri.EscapeDataString(fromOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (toUtc != null)
+                    if (toOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("toUtc")).Append('=').Append(System.Uri.EscapeDataString(toUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("toOnUtc")).Append('=').Append(System.Uri.EscapeDataString(toOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -7170,7 +7170,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByTraceAsync(string traceId, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ByTraceAsync(string traceId, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (traceId == null)
                 throw new System.ArgumentNullException("traceId");
@@ -7190,13 +7190,13 @@ namespace FSH.Playground.Blazor.ApiClient
                     urlBuilder_.Append("api/v1/audits/by-trace/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(traceId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append('?');
-                    if (fromUtc != null)
+                    if (fromOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("fromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("fromOnUtc")).Append('=').Append(System.Uri.EscapeDataString(fromOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (toUtc != null)
+                    if (toOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("toUtc")).Append('=').Append(System.Uri.EscapeDataString(toUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("toOnUtc")).Append('=').Append(System.Uri.EscapeDataString(toOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -7273,7 +7273,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> SecurityAsync(int? action = null, string userId = null, string tenantId = null, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> SecurityAsync(int? action = null, string userId = null, string tenantId = null, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7301,13 +7301,13 @@ namespace FSH.Playground.Blazor.ApiClient
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("TenantId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(tenantId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (fromUtc != null)
+                    if (fromOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("FromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("FromOnUtc")).Append('=').Append(System.Uri.EscapeDataString(fromOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (toUtc != null)
+                    if (toOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("ToUtc")).Append('=').Append(System.Uri.EscapeDataString(toUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("ToOnUtc")).Append('=').Append(System.Uri.EscapeDataString(toOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -7384,7 +7384,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ExceptionsAsync(int? area = null, int? severity = null, string exceptionType = null, string routeOrLocation = null, System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditSummaryDto>> ExceptionsAsync(int? area = null, int? severity = null, string exceptionType = null, string routeOrLocation = null, System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7416,13 +7416,13 @@ namespace FSH.Playground.Blazor.ApiClient
                     {
                         urlBuilder_.Append(System.Uri.EscapeDataString("RouteOrLocation")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(routeOrLocation, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (fromUtc != null)
+                    if (fromOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("FromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("FromOnUtc")).Append('=').Append(System.Uri.EscapeDataString(fromOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (toUtc != null)
+                    if (toOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("ToUtc")).Append('=').Append(System.Uri.EscapeDataString(toUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("ToOnUtc")).Append('=').Append(System.Uri.EscapeDataString(toOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -7499,7 +7499,7 @@ namespace FSH.Playground.Blazor.ApiClient
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AuditSummaryAggregateDto> SummaryAsync(System.DateTimeOffset? fromUtc = null, System.DateTimeOffset? toUtc = null, string tenantId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public virtual async System.Threading.Tasks.Task<AuditSummaryAggregateDto> SummaryAsync(System.DateTimeOffset? fromOnUtc = null, System.DateTimeOffset? toOnUtc = null, string tenantId = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -7515,13 +7515,13 @@ namespace FSH.Playground.Blazor.ApiClient
                     // Operation Path: "api/v1/audits/summary"
                     urlBuilder_.Append("api/v1/audits/summary");
                     urlBuilder_.Append('?');
-                    if (fromUtc != null)
+                    if (fromOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("FromUtc")).Append('=').Append(System.Uri.EscapeDataString(fromUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("FromOnUtc")).Append('=').Append(System.Uri.EscapeDataString(fromOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
-                    if (toUtc != null)
+                    if (toOnUtc != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("ToUtc")).Append('=').Append(System.Uri.EscapeDataString(toUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("ToOnUtc")).Append('=').Append(System.Uri.EscapeDataString(toOnUtc.Value.ToString("o", System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     if (tenantId != null)
                     {
@@ -8401,11 +8401,11 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("occurredAtUtc")]
-        public System.DateTimeOffset OccurredAtUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("occurredOnUtc")]
+        public System.DateTimeOffset OccurredOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("receivedAtUtc")]
-        public System.DateTimeOffset ReceivedAtUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("receivedOnUtc")]
+        public System.DateTimeOffset ReceivedOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("eventType")]
         public int EventType { get; set; }
@@ -8488,8 +8488,8 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("occurredAtUtc")]
-        public System.DateTimeOffset OccurredAtUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("occurredOnUtc")]
+        public System.DateTimeOffset OccurredOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("eventType")]
         public int EventType { get; set; }
@@ -8820,8 +8820,8 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("lastName")]
         public string LastName { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("addedAt")]
-        public System.DateTimeOffset AddedAt { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("addedAtOnUtc")]
+        public System.DateTimeOffset AddedAtOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("addedBy")]
         public string AddedBy { get; set; }
@@ -9128,9 +9128,9 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string RefreshToken { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("refreshTokenExpiryTime")]
+        [System.Text.Json.Serialization.JsonPropertyName("refreshTokenExpiresOnUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset RefreshTokenExpiryTime { get; set; }
+        public System.DateTimeOffset RefreshTokenExpiresOnUtc { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -9286,8 +9286,8 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("validUpto")]
-        public System.DateTimeOffset ValidUpto { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("validUptoOnUtc")]
+        public System.DateTimeOffset ValidUptoOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("issuer")]
         public string Issuer { get; set; }
@@ -9313,8 +9313,8 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("validUpto")]
-        public System.DateTimeOffset? ValidUpto { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("validUptoOnUtc")]
+        public System.DateTimeOffset? ValidUptoOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
         public string Message { get; set; }
@@ -9352,15 +9352,15 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("error")]
         public string Error { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("createdUtc")]
+        [System.Text.Json.Serialization.JsonPropertyName("createdOnUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset CreatedUtc { get; set; }
+        public System.DateTimeOffset CreatedOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("startedUtc")]
-        public System.DateTimeOffset? StartedUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("startedOnUtc")]
+        public System.DateTimeOffset? StartedOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("completedUtc")]
-        public System.DateTimeOffset? CompletedUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("completedOnUtc")]
+        public System.DateTimeOffset? CompletedOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("steps")]
         [System.ComponentModel.DataAnnotations.Required]
@@ -9389,11 +9389,11 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Status { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("startedUtc")]
-        public System.DateTimeOffset? StartedUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("startedOnUtc")]
+        public System.DateTimeOffset? StartedOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("completedUtc")]
-        public System.DateTimeOffset? CompletedUtc { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("completedOnUtc")]
+        public System.DateTimeOffset? CompletedOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("error")]
         public string Error { get; set; }
@@ -9422,8 +9422,8 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("validUpto")]
-        public System.DateTimeOffset ValidUpto { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("validUptoOnUtc")]
+        public System.DateTimeOffset ValidUptoOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("hasConnectionString")]
         public bool HasConnectionString { get; set; }
@@ -9511,13 +9511,13 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string RefreshToken { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("refreshTokenExpiresAt")]
+        [System.Text.Json.Serialization.JsonPropertyName("refreshTokenExpiresOnUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset RefreshTokenExpiresAt { get; set; }
+        public System.DateTimeOffset RefreshTokenExpiresOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("accessTokenExpiresAt")]
+        [System.Text.Json.Serialization.JsonPropertyName("accessTokenExpiresOnUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset AccessTokenExpiresAt { get; set; }
+        public System.DateTimeOffset AccessTokenExpiresOnUtc { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -9652,9 +9652,9 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
         public string Tenant { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("extendedExpiryDate")]
+        [System.Text.Json.Serialization.JsonPropertyName("extendedExpiryOnUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset ExtendedExpiryDate { get; set; }
+        public System.DateTimeOffset ExtendedExpiryOnUtc { get; set; }
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -9671,9 +9671,9 @@ namespace FSH.Playground.Blazor.ApiClient
     public partial class UpgradeTenantCommandResponse
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("newValidity")]
+        [System.Text.Json.Serialization.JsonPropertyName("newValidityOnUtc")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        public System.DateTimeOffset NewValidity { get; set; }
+        public System.DateTimeOffset NewValidityOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("tenant")]
         [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -9817,14 +9817,14 @@ namespace FSH.Playground.Blazor.ApiClient
         [System.Text.Json.Serialization.JsonPropertyName("osVersion")]
         public string OsVersion { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("createdAt")]
-        public System.DateTimeOffset CreatedAt { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("createdOnUtc")]
+        public System.DateTimeOffset CreatedOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lastActivityAt")]
-        public System.DateTimeOffset LastActivityAt { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("lastActivityOnUtc")]
+        public System.DateTimeOffset LastActivityOnUtc { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("expiresAt")]
-        public System.DateTimeOffset ExpiresAt { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("expiresOnUtc")]
+        public System.DateTimeOffset ExpiresOnUtc { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; }

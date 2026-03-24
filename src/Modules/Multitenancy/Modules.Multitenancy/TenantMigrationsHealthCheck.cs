@@ -47,7 +47,7 @@ public sealed class TenantMigrationsHealthCheck : IHealthCheck
                 {
                     tenant.Name,
                     tenant.IsActive,
-                    tenant.ValidUpto,
+                    tenant.ValidUptoOnUtc,
                     HasPendingMigrations = hasPending,
                     PendingMigrations = pendingMigrations.ToArray()
                 };
@@ -58,7 +58,7 @@ public sealed class TenantMigrationsHealthCheck : IHealthCheck
                 {
                     tenant.Name,
                     tenant.IsActive,
-                    tenant.ValidUpto,
+                    tenant.ValidUptoOnUtc,
                     Error = ex.Message
                 };
             }

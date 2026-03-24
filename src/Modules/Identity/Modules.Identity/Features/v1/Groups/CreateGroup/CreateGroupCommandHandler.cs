@@ -55,12 +55,13 @@ public sealed class CreateGroupCommandHandler : ICommandHandler<CreateGroupComma
             description: command.Description,
             isDefault: command.IsDefault,
             isSystemGroup: false,
-            createdBy: _currentUser.GetUserId().ToString());
+            createdBy: _currentUser.GetUserId().ToString(),
+            tenantId: _dbContext.TenantInfo?.Id ?? throw new UnauthorizedException("Tenant context required."));
 
         // Add role assignments
         foreach (var role in resolvedRoles)
         {
-            _dbContext.GroupRoles.Add(GroupRole.Create(group.Id, role.Item1));
+            _dbContext.GroupRoles.Add(GroupRole.Create(group.Id, role.Item1, group.TenantId));
         }
 
         _dbContext.Groups.Add(group);

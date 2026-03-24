@@ -7,8 +7,8 @@ public sealed class GetAuditsByCorrelationQuery : IQuery<IReadOnlyList<AuditSumm
 {
     public string CorrelationId { get; init; } = default!;
 
-    public DateTime? FromUtc { get; init; }
+    public DateTimeOffset? FromOnUtc { get; init; }
 
-    public DateTime? ToUtc { get; init; }
+    public DateTimeOffset? ToOnUtc { get; init; }
 }
 

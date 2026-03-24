@@ -21,6 +21,7 @@
     <PackageReference Include="RabbitMQ.Client" />
     <PackageReference Include="Finbuckle.MultiTenant.Abstractions" />
     <PackageReference Include="Finbuckle.MultiTenant" />
+    <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" />
   </ItemGroup>
 
   <ItemGroup>

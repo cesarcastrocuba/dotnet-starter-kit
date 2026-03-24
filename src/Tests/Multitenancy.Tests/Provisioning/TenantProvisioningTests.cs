@@ -48,18 +48,18 @@ public sealed class TenantProvisioningTests
     }
 
     [Fact]
-    public void Constructor_Should_SetCreatedUtc()
+    public void Constructor_Should_SetCreatedOnUtc()
     {
         // Arrange
-        var before = DateTime.UtcNow;
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         var provisioning = new TenantProvisioning("tenant-1", Guid.NewGuid().ToString());
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        provisioning.CreatedUtc.ShouldBeGreaterThanOrEqualTo(before);
-        provisioning.CreatedUtc.ShouldBeLessThanOrEqualTo(after);
+        provisioning.CreatedOnUtc.ShouldBeGreaterThanOrEqualTo(before);
+        provisioning.CreatedOnUtc.ShouldBeLessThanOrEqualTo(after);
     }
 
     [Fact]
@@ -82,8 +82,8 @@ public sealed class TenantProvisioningTests
         provisioning.CurrentStep.ShouldBeNull();
         provisioning.Error.ShouldBeNull();
         provisioning.JobId.ShouldBeNull();
-        provisioning.StartedUtc.ShouldBeNull();
-        provisioning.CompletedUtc.ShouldBeNull();
+        provisioning.StartedOnUtc.ShouldBeNull();
+        provisioning.CompletedOnUtc.ShouldBeNull();
     }
 
     [Fact]
@@ -160,35 +160,35 @@ public sealed class TenantProvisioningTests
     }
 
     [Fact]
-    public void MarkRunning_Should_SetStartedUtc_OnFirstCall()
+    public void MarkRunning_Should_SetStartedOnUtc_OnFirstCall()
     {
         // Arrange
         var provisioning = new TenantProvisioning("tenant-1", Guid.NewGuid().ToString());
-        var before = DateTime.UtcNow;
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         provisioning.MarkRunning("Migration");
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        provisioning.StartedUtc.ShouldNotBeNull();
-        provisioning.StartedUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
-        provisioning.StartedUtc.Value.ShouldBeLessThanOrEqualTo(after);
+        provisioning.StartedOnUtc.ShouldNotBeNull();
+        provisioning.StartedOnUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
+        provisioning.StartedOnUtc.Value.ShouldBeLessThanOrEqualTo(after);
     }
 
     [Fact]
-    public void MarkRunning_Should_NotOverwriteStartedUtc_OnSubsequentCalls()
+    public void MarkRunning_Should_NotOverwriteStartedOnUtc_OnSubsequentCalls()
     {
         // Arrange
         var provisioning = new TenantProvisioning("tenant-1", Guid.NewGuid().ToString());
         provisioning.MarkRunning("Migration");
-        var firstStartedUtc = provisioning.StartedUtc;
+        var firstStartedOnUtc = provisioning.StartedOnUtc;
 
         // Act - Call again with different step
         provisioning.MarkRunning("Seeding");
 
-        // Assert - StartedUtc should not change
-        provisioning.StartedUtc.ShouldBe(firstStartedUtc);
+        // Assert - StartedOnUtc should not change
+        provisioning.StartedOnUtc.ShouldBe(firstStartedOnUtc);
         provisioning.CurrentStep.ShouldBe("Seeding");
     }
 
@@ -211,20 +211,20 @@ public sealed class TenantProvisioningTests
     }
 
     [Fact]
-    public void MarkCompleted_Should_SetCompletedUtc()
+    public void MarkCompleted_Should_SetCompletedOnUtc()
     {
         // Arrange
         var provisioning = new TenantProvisioning("tenant-1", Guid.NewGuid().ToString());
-        var before = DateTime.UtcNow;
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         provisioning.MarkCompleted();
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        provisioning.CompletedUtc.ShouldNotBeNull();
-        provisioning.CompletedUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
-        provisioning.CompletedUtc.Value.ShouldBeLessThanOrEqualTo(after);
+        provisioning.CompletedOnUtc.ShouldNotBeNull();
+        provisioning.CompletedOnUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
+        provisioning.CompletedOnUtc.Value.ShouldBeLessThanOrEqualTo(after);
     }
 
     [Fact]
@@ -300,20 +300,20 @@ public sealed class TenantProvisioningTests
     }
 
     [Fact]
-    public void MarkFailed_Should_SetCompletedUtc()
+    public void MarkFailed_Should_SetCompletedOnUtc()
     {
         // Arrange
         var provisioning = new TenantProvisioning("tenant-1", Guid.NewGuid().ToString());
-        var before = DateTime.UtcNow;
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         provisioning.MarkFailed("Migration", "Error");
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        provisioning.CompletedUtc.ShouldNotBeNull();
-        provisioning.CompletedUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
-        provisioning.CompletedUtc.Value.ShouldBeLessThanOrEqualTo(after);
+        provisioning.CompletedOnUtc.ShouldNotBeNull();
+        provisioning.CompletedOnUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
+        provisioning.CompletedOnUtc.Value.ShouldBeLessThanOrEqualTo(after);
     }
 
     #endregion

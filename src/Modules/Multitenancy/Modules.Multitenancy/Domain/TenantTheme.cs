@@ -65,10 +65,10 @@ public class TenantTheme : BaseEntity<Guid>, IHasTenant, IAuditableEntity
         };
     }
 
-    public void Update(string? modifiedBy)
+    public void Update(string? lastModifiedBy = null)
     {
         LastModifiedOnUtc = DateTimeOffset.UtcNow;
-        LastModifiedBy = modifiedBy;
+        LastModifiedBy = lastModifiedBy;
     }
 
     public void ResetToDefaults()

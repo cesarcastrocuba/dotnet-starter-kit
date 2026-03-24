@@ -12,12 +12,10 @@ namespace FSH.Modules.Identity.Features.v1.Groups.UpdateGroup;
 public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupCommand, GroupDto>
 {
     private readonly IdentityDbContext _dbContext;
-    private readonly ICurrentUser _currentUser;
 
-    public UpdateGroupCommandHandler(IdentityDbContext dbContext, ICurrentUser currentUser)
+    public UpdateGroupCommandHandler(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
-        _currentUser = currentUser;
     }
 
     public async ValueTask<GroupDto> Handle(UpdateGroupCommand command, CancellationToken cancellationToken)
@@ -28,9 +26,8 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
         await ValidateUniqueNameAsync(command.Id, command.Name, cancellationToken);
         await ValidateRoleIdsAsync(command.RoleIds, cancellationToken);
 
-        var userId = _currentUser.GetUserId().ToString();
-        group.Update(command.Name, command.Description, userId);
-        group.SetAsDefault(command.IsDefault, userId);
+        group.Update(command.Name, command.Description);
+        group.SetAsDefault(command.IsDefault);
 
         var newRoleIds = UpdateRoleAssignments(group, command.RoleIds);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -89,7 +86,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
 
         foreach (var roleId in newRoleIds.Where(id => !currentRoleIds.Contains(id)))
         {
-            group.GroupRoles.Add(GroupRole.Create(group.Id, roleId));
+            group.GroupRoles.Add(GroupRole.Create(group.Id, roleId, group.TenantId));
         }
 
         return newRoleIds;

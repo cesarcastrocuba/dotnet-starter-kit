@@ -17,7 +17,8 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasDefaultSchema("tenant")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -48,7 +49,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("ValidUpto")
+                    b.Property<DateTimeOffset>("ValidUptoOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -219,6 +220,8 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                         .IsUnique();
 
                     b.ToTable("TenantThemes", "tenant");
+
+                    b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });
 
             modelBuilder.Entity("FSH.Modules.Multitenancy.Provisioning.TenantProvisioning", b =>
@@ -227,14 +230,14 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CompletedUtc")
+                    b.Property<DateTimeOffset?>("CompletedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CorrelationId")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedUtc")
+                    b.Property<DateTimeOffset>("CreatedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CurrentStep")
@@ -246,7 +249,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                     b.Property<string>("JobId")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("StartedUtc")
+                    b.Property<DateTimeOffset?>("StartedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
@@ -254,11 +257,14 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
 
                     b.ToTable("TenantProvisionings", "tenant");
+
+                    b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });
 
             modelBuilder.Entity("FSH.Modules.Multitenancy.Provisioning.TenantProvisioningStep", b =>
@@ -267,7 +273,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CompletedUtc")
+                    b.Property<DateTimeOffset?>("CompletedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Error")
@@ -276,7 +282,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                     b.Property<Guid>("ProvisioningId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("StartedUtc")
+                    b.Property<DateTimeOffset?>("StartedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
@@ -285,11 +291,18 @@ namespace FSH.Playground.Migrations.PostgreSQL.MultiTenancy
                     b.Property<int>("Step")
                         .HasColumnType("integer");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProvisioningId");
 
                     b.ToTable("TenantProvisioningSteps", "tenant");
+
+                    b.HasAnnotation("Finbuckle:MultiTenant", true);
                 });
 
             modelBuilder.Entity("FSH.Modules.Multitenancy.Provisioning.TenantProvisioningStep", b =>

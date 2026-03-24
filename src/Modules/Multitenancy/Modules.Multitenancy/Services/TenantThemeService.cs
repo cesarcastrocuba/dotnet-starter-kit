@@ -21,27 +21,24 @@ public sealed class TenantThemeService : ITenantThemeService
     private const string DefaultThemeCacheKey = "theme:default";
     private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
 
-    private readonly ICacheService _cache;
+    private readonly ITenantCacheService _cache;
     private readonly TenantDbContext _dbContext;
     private readonly IMultiTenantContextAccessor<AppTenantInfo> _tenantAccessor;
     private readonly IStorageService _storageService;
     private readonly ILogger<TenantThemeService> _logger;
-    private readonly ICurrentUser _currentUser;
 
     public TenantThemeService(
-        ICacheService cache,
+        ITenantCacheService cache,
         TenantDbContext dbContext,
         IMultiTenantContextAccessor<AppTenantInfo> tenantAccessor,
         IStorageService storageService,
-        ILogger<TenantThemeService> logger,
-        ICurrentUser currentUser)
+        ILogger<TenantThemeService> logger)
     {
         _cache = cache;
         _dbContext = dbContext;
         _tenantAccessor = tenantAccessor;
         _storageService = storageService;
         _logger = logger;
-        _currentUser = currentUser;
     }
 
     public async Task<TenantThemeDto> GetCurrentTenantThemeAsync(CancellationToken ct = default)
@@ -55,7 +52,7 @@ public sealed class TenantThemeService : ITenantThemeService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
-        var cacheKey = $"{CacheKeyPrefix}{tenantId}";
+        var cacheKey = CacheKeyPrefix;
 
         var theme = await _cache.GetOrSetAsync(
             cacheKey,
@@ -96,7 +93,7 @@ public sealed class TenantThemeService : ITenantThemeService
         await HandleBrandAssetUploadsAsync(theme.BrandAssets, entity, ct).ConfigureAwait(false);
 
         MapDtoToEntity(theme, entity);
-        entity.Update(GetCurrentUserId());
+        entity.Update();
 
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
         await InvalidateCacheAsync(tenantId, ct).ConfigureAwait(false);
@@ -163,19 +160,20 @@ public sealed class TenantThemeService : ITenantThemeService
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantId);
 
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(t => t.TenantId == tenantId, ct)
             .ConfigureAwait(false);
 
         if (entity is not null)
         {
             entity.ResetToDefaults();
-            entity.Update(GetCurrentUserId());
+            entity.Update();
             await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
         }
 
         await InvalidateCacheAsync(tenantId, ct).ConfigureAwait(false);
         // Also invalidate default cache in case this tenant was the default
-        await _cache.RemoveItemAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
+        await _cache.RemoveAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
 
         if (_logger.IsEnabled(LogLevel.Information))
         {
@@ -196,6 +194,7 @@ public sealed class TenantThemeService : ITenantThemeService
 
         // Clear existing default
         var existingDefault = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(t => t.IsDefault, ct)
             .ConfigureAwait(false);
 
@@ -206,6 +205,7 @@ public sealed class TenantThemeService : ITenantThemeService
 
         // Set new default
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .FirstOrDefaultAsync(t => t.TenantId == tenantId, ct)
             .ConfigureAwait(false);
 
@@ -218,7 +218,7 @@ public sealed class TenantThemeService : ITenantThemeService
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
 
         // Invalidate default theme cache
-        await _cache.RemoveItemAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
+        await _cache.RemoveAsync(DefaultThemeCacheKey, ct).ConfigureAwait(false);
 
         if (_logger.IsEnabled(LogLevel.Information))
         {
@@ -228,13 +228,14 @@ public sealed class TenantThemeService : ITenantThemeService
 
     public async Task InvalidateCacheAsync(string tenantId, CancellationToken ct = default)
     {
-        var cacheKey = $"{CacheKeyPrefix}{tenantId}";
-        await _cache.RemoveItemAsync(cacheKey, ct).ConfigureAwait(false);
+        var cacheKey = CacheKeyPrefix;
+        await _cache.RemoveAsync(cacheKey, ct).ConfigureAwait(false);
     }
 
     private async Task<TenantThemeDto?> LoadThemeFromDbAsync(string tenantId, CancellationToken ct)
     {
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.TenantId == tenantId, ct)
             .ConfigureAwait(false);
@@ -245,6 +246,7 @@ public sealed class TenantThemeService : ITenantThemeService
     private async Task<TenantThemeDto?> LoadDefaultThemeFromDbAsync(CancellationToken ct)
     {
         var entity = await _dbContext.TenantThemes
+            .IgnoreQueryFilters()
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.IsDefault, ct)
             .ConfigureAwait(false);
@@ -352,9 +354,4 @@ public sealed class TenantThemeService : ITenantThemeService
         entity.DefaultElevation = dto.Layout.DefaultElevation;
     }
 
-    private string? GetCurrentUserId()
-    {
-        var userId = _currentUser.GetUserId();
-        return userId == Guid.Empty ? null : userId.ToString();
-    }
 }

@@ -36,7 +36,7 @@ public sealed class EfCoreOutboxStore<TDbContext> : IOutboxStore
             CreatedOnUtc = @event.OccurredOnUtc,
             Type = @event.GetType().AssemblyQualifiedName ?? @event.GetType().FullName!,
             Payload = payload,
-            TenantId = @event.TenantId,
+            TenantId = @event.TenantId ?? string.Empty,
             CorrelationId = @event.CorrelationId,
             RetryCount = 0,
             IsDead = false
@@ -51,6 +51,7 @@ public sealed class EfCoreOutboxStore<TDbContext> : IOutboxStore
         try
         {
             return await _dbContext.Set<OutboxMessage>()
+                .IgnoreQueryFilters()
                 .Where(m => !m.IsDead && m.ProcessedOnUtc == null)
                 .OrderBy(m => m.CreatedOnUtc)
                 .Take(batchSize)
@@ -72,7 +73,7 @@ public sealed class EfCoreOutboxStore<TDbContext> : IOutboxStore
     {
         ArgumentNullException.ThrowIfNull(message);
 
-        message.ProcessedOnUtc = DateTime.UtcNow;
+        message.ProcessedOnUtc = DateTimeOffset.UtcNow;
         _dbContext.Set<OutboxMessage>().Update(message);
         await _dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
     }

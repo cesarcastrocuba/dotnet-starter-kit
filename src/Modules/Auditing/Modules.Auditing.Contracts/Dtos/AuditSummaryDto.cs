@@ -6,7 +6,7 @@ public sealed class AuditSummaryDto
 {
     public Guid Id { get; set; }
 
-    public DateTime OccurredAtUtc { get; set; }
+    public DateTimeOffset OccurredOnUtc { get; set; }
 
     public AuditEventType EventType { get; set; }
 

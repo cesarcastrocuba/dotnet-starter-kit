@@ -9,6 +9,13 @@ using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
 using Testcontainers.MsSql;
 using Xunit;
+using FSH.Modules.Identity.Data;
+using FSH.Modules.Multitenancy.Data;
+using Microsoft.EntityFrameworkCore;
+using FSH.Framework.Shared.Multitenancy;
+using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Abstractions;
+using FSH.Framework.Persistence;
 
 namespace FSH.Tests.Shared.Infrastructure;
 
@@ -79,6 +86,43 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
             await _dbContainer.StartAsync();
 
         await _redisContainer.StartAsync();
+
+        // Ensure database schema is created and root tenant is seeded before tests run
+        using var scope = Services.CreateScope();
+        
+        // 1. Migrate Tenant Catalog
+        var tenantDbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
+        await tenantDbContext.Database.MigrateAsync();
+
+        // 2. Ensure Root Tenant exists and SET CONTEXT IMMEDIATELY
+        var rootTenant = await tenantDbContext.TenantInfo.FindAsync(MultitenancyConstants.Root.Id);
+        if (rootTenant is null)
+        {
+            rootTenant = new AppTenantInfo(
+                MultitenancyConstants.Root.Id,
+                MultitenancyConstants.Root.Name,
+                null,
+                MultitenancyConstants.Root.EmailAddress,
+                issuer: MultitenancyConstants.Root.Issuer);
+            rootTenant.SetValidity(DateTimeOffset.UtcNow.AddYears(1));
+            await tenantDbContext.TenantInfo.AddAsync(rootTenant);
+            await tenantDbContext.SaveChangesAsync();
+        }
+
+        // 3. Set Context for the rest of the initialization
+        var setter = scope.ServiceProvider.GetRequiredService<IMultiTenantContextSetter>();
+        setter.MultiTenantContext = new MultiTenantContext<AppTenantInfo>(rootTenant);
+
+        // 4. Migrate Identity Schema
+        var identityDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+        await identityDbContext.Database.MigrateAsync();
+
+        // 5. Seed Identity for Root Tenant
+        var initializers = scope.ServiceProvider.GetServices<IDbInitializer>();
+        foreach (var initializer in initializers)
+        {
+            await initializer.SeedAsync(default);
+        }
     }
 
     public new async Task DisposeAsync()
