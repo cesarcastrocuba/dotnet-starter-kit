@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
+using Testcontainers.MsSql;
 using Xunit;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Multitenancy.Data;
@@ -20,33 +21,48 @@ namespace FSH.Tests.Shared.Infrastructure;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer;
+    private readonly PostgreSqlContainer? _dbPostgreSqlContainer;
+    private readonly MsSqlContainer? _dbMsSqlContainer;
     private readonly RedisContainer _redisContainer;
-
+    private string _connectionString { get; set; } = default!;
+    private string _dbProvider { get; set; } = "mssql";
     public CustomWebApplicationFactory()
-    {
-        _dbContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:16-alpine")
-            .WithDatabase("fsh_test_b")
-            .WithUsername("postgres")
-            .WithPassword("fsh_secret_123!")
-            .Build();
+    {      
+        if (_dbProvider == "mssql")
+        {
+            _dbMsSqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
+                .WithPassword("fsh_secret_123!")
+                .Build();
+        }
+        else 
+        {
+            _dbPostgreSqlContainer = new PostgreSqlBuilder("postgres:16-alpine")
+                .WithDatabase("fsh_test_b")
+                .WithUsername("postgres")
+                .WithPassword("fsh_secret_123!")
+                .Build();
+        }
 
-        _redisContainer = new RedisBuilder()
-            .WithImage("redis:7-alpine")
+        _redisContainer = new RedisBuilder("redis:7-alpine")
             .Build();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        
+
+        if (_dbProvider == "mssql") 
+            _connectionString = _dbMsSqlContainer?.GetConnectionString() ?? throw new InvalidOperationException("MSSQL container is not initialized.");
+        else
+            _connectionString = _dbPostgreSqlContainer?.GetConnectionString() ?? throw new InvalidOperationException("PostgreSQL container is not initialized.");
+
+
         builder.UseEnvironment("Testing");
         builder.ConfigureAppConfiguration((context, config) =>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                { "DatabaseOptions:ConnectionString", _dbContainer.GetConnectionString() },
+                { "DatabaseOptions:ConnectionString", _connectionString },
                 { "CachingOptions:Redis", _redisContainer.GetConnectionString() },
                 { "MultitenancyOptions:RunTenantMigrationsOnStartup", "true" }
             });
@@ -60,7 +76,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
     public async Task InitializeAsync()
     {
-        await _dbContainer.StartAsync();
+        if (_dbProvider == "mssql" && _dbMsSqlContainer != null)
+            await _dbMsSqlContainer.StartAsync();
+        else if (_dbPostgreSqlContainer != null)
+            await _dbPostgreSqlContainer.StartAsync();
+
         await _redisContainer.StartAsync();
 
         // Ensure database schema is created and root tenant is seeded before tests run
@@ -103,8 +123,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
     public new async Task DisposeAsync()
     {
-        await base.DisposeAsync();
-        await _dbContainer.DisposeAsync().AsTask();
+        if (_dbProvider == "mssql" && _dbMsSqlContainer != null)
+            await _dbMsSqlContainer.DisposeAsync().AsTask();
+        else if (_dbPostgreSqlContainer != null)
+            await _dbPostgreSqlContainer.DisposeAsync().AsTask();
+
         await _redisContainer.DisposeAsync().AsTask();
     }
 }

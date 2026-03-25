@@ -25,8 +25,6 @@ public sealed class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantD
             .Build();
 
         var provider = configuration["DatabaseOptions:Provider"] ?? "POSTGRESQL";
-        var connectionString = configuration["DatabaseOptions:ConnectionString"]
-            ?? "Host=localhost;Database=fsh-tenant;Username=postgres;Password=postgres";
         var migrationsAssembly = configuration["DatabaseOptions:MigrationsAssembly"]
             ?? "FSH.Playground.Migrations.PostgreSQL";
         var optionsBuilder = new DbContextOptionsBuilder<TenantDbContext>();
@@ -34,10 +32,27 @@ public sealed class TenantDbContextFactory : IDesignTimeDbContextFactory<TenantD
         switch (provider.ToUpperInvariant())
         {
             case "POSTGRESQL":
+            {
+                var connectionString = configuration["DatabaseOptions:ConnectionString"]
+                    ?? "Host=localhost;Database=fsh-tenant;Username=postgres;Password=postgres";
                 optionsBuilder.UseNpgsql(
                     connectionString,
                     b => b.MigrationsAssembly(migrationsAssembly));
                 break;
+            }
+            case "MSSQL":
+            {
+                var connectionString = configuration["DatabaseOptions:ConnectionString"]
+                    ?? "Server=localhost;Database=fsh;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True";
+                optionsBuilder.UseSqlServer(
+                    connectionString,
+                    b =>
+                    {
+                        b.MigrationsAssembly(migrationsAssembly);
+                        b.EnableRetryOnFailure();
+                    });
+                break;
+            }
             default:
                 throw new NotSupportedException($"Database provider '{provider}' is not supported for TenantDbContext migrations.");
         }
