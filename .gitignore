@@ -492,7 +492,7 @@ team/
 spec-os/
 /PLAN.md
 **/nul
-
+**/wwwroot/uploads/*
 /agent_docs/blazor.md
 /.claude/settings.local.json
 tmpclaude**
