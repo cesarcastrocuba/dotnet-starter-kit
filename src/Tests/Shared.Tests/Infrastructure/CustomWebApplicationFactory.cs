@@ -21,8 +21,8 @@ namespace FSH.Tests.Shared.Infrastructure;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer;
-    private readonly MsSqlContainer _dbMsSqlContainer;
+    private readonly PostgreSqlContainer? _dbPostgreSqlContainer;
+    private readonly MsSqlContainer? _dbMsSqlContainer;
     private readonly RedisContainer _redisContainer;
     private string _connectionString { get; set; } = default!;
     private string _dbProvider { get; set; } = "mssql";
@@ -30,24 +30,20 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
     {      
         if (_dbProvider == "mssql")
         {
-            _dbMsSqlContainer = new MsSqlBuilder()
-                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            _dbMsSqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
                 .WithPassword("fsh_secret_123!")
                 .Build();
         }
         else 
         {
-            _dbContainer = new PostgreSqlBuilder()
-                .WithImage("postgres:16-alpine")
+            _dbPostgreSqlContainer = new PostgreSqlBuilder("postgres:16-alpine")
                 .WithDatabase("fsh_test_b")
                 .WithUsername("postgres")
                 .WithPassword("fsh_secret_123!")
                 .Build();
         }
 
-
-        _redisContainer = new RedisBuilder()
-            .WithImage("redis:7-alpine")
+        _redisContainer = new RedisBuilder("redis:7-alpine")
             .Build();
     }
 
@@ -56,9 +52,9 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
         ArgumentNullException.ThrowIfNull(builder);
 
         if (_dbProvider == "mssql") 
-            _connectionString = _dbMsSqlContainer.GetConnectionString();
+            _connectionString = _dbMsSqlContainer?.GetConnectionString() ?? throw new InvalidOperationException("MSSQL container is not initialized.");
         else
-            _connectionString = _dbContainer.GetConnectionString();
+            _connectionString = _dbPostgreSqlContainer?.GetConnectionString() ?? throw new InvalidOperationException("PostgreSQL container is not initialized.");
 
 
         builder.UseEnvironment("Testing");
@@ -80,10 +76,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
     public async Task InitializeAsync()
     {
-        if (_dbProvider == "mssql")
+        if (_dbProvider == "mssql" && _dbMsSqlContainer != null)
             await _dbMsSqlContainer.StartAsync();
-        else
-            await _dbContainer.StartAsync();
+        else if (_dbPostgreSqlContainer != null)
+            await _dbPostgreSqlContainer.StartAsync();
 
         await _redisContainer.StartAsync();
 
@@ -127,10 +123,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
 
     public new async Task DisposeAsync()
     {
-        if (_dbProvider == "mssql")
+        if (_dbProvider == "mssql" && _dbMsSqlContainer != null)
             await _dbMsSqlContainer.DisposeAsync().AsTask();
-        else
-            await _dbContainer.DisposeAsync().AsTask();
+        else if (_dbPostgreSqlContainer != null)
+            await _dbPostgreSqlContainer.DisposeAsync().AsTask();
 
         await _redisContainer.DisposeAsync().AsTask();
     }

@@ -4,6 +4,7 @@ using FSH.Modules.Auditing.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FSH.Playground.Migrations.MSSQL.Audit
 {
     [DbContext(typeof(AuditDbContext))]
-    partial class AuditDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319221458_Auditing_TenancyStandardization")]
+    partial class AuditingTenancyStandardization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,15 +37,15 @@ namespace FSH.Playground.Migrations.MSSQL.Audit
                     b.Property<int>("EventType")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("OccurredOnUtc")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("OccurredAtUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PayloadJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("ReceivedOnUtc")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("ReceivedAtUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("RequestId")
                         .HasColumnType("nvarchar(max)");
@@ -76,7 +79,7 @@ namespace FSH.Playground.Migrations.MSSQL.Audit
 
                     b.HasIndex("EventType");
 
-                    b.HasIndex("OccurredOnUtc");
+                    b.HasIndex("OccurredAtUtc");
 
                     b.HasIndex("TenantId");
 

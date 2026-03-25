@@ -33,7 +33,7 @@ public static class PersistenceExtensions
         // IMPORTANT: DatabasePrecreatorHostedService MUST be registered before any IDbInitializer
         // hosted services. IHostedService implementations execute in DI registration order.
         // This ensures the target database exists before EF Core MigrateAsync() is called.
-        services.AddHostedService<DatabasePrecreatorHostedService>();
+        //services.AddHostedService<DatabasePrecreatorHostedService>();
         services.AddHostedService<DatabaseOptionsStartupLogger>();
         services.AddPersistenceServices();
         return services;
