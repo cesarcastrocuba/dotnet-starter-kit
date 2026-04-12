@@ -7,23 +7,23 @@ namespace FSH.Modules.Multitenancy.Contracts;
 
 public interface ITenantService
 {
-    Task<PagedResponse<TenantDto>> GetAllAsync(GetTenantsQuery query, CancellationToken cancellationToken);
+    ValueTask<PagedResponse<TenantDto>> GetAllAsync(GetTenantsQuery query, CancellationToken cancellationToken);
 
-    Task<bool> ExistsWithIdAsync(string id, CancellationToken cancellationToken = default);
+    ValueTask<bool> ExistsWithIdAsync(string id, CancellationToken cancellationToken = default);
 
-    Task<bool> ExistsWithNameAsync(string name, CancellationToken cancellationToken = default);
+    ValueTask<bool> ExistsWithNameAsync(string name, CancellationToken cancellationToken = default);
 
-    Task<TenantStatusDto> GetStatusAsync(string id, CancellationToken cancellationToken = default);
+    ValueTask<TenantStatusDto> GetStatusAsync(string id, CancellationToken cancellationToken = default);
 
-    Task<string> CreateAsync(string id, string name, string? connectionString, string adminEmail, string? issuer, CancellationToken cancellationToken);
+    ValueTask<string> CreateAsync(string id, string name, string? connectionString, string adminEmail, string? issuer, CancellationToken cancellationToken);
 
-    Task<string> ActivateAsync(string id, CancellationToken cancellationToken);
+    ValueTask<string> ActivateAsync(string id, CancellationToken cancellationToken);
 
-    Task<string> DeactivateAsync(string id, CancellationToken cancellationToken = default);
+    ValueTask<string> DeactivateAsync(string id, CancellationToken cancellationToken = default);
 
-    Task<DateTime> UpgradeSubscriptionAsync(string id, DateTime extendedExpiryDate, CancellationToken cancellationToken = default);
+    ValueTask<DateTimeOffset> UpgradeSubscriptionAsync(string id, DateTimeOffset extendedExpiryDate, CancellationToken cancellationToken = default);
 
-    Task MigrateTenantAsync(AppTenantInfo tenant, CancellationToken cancellationToken);
+    ValueTask MigrateTenantAsync(AppTenantInfo tenant, CancellationToken cancellationToken);
 
-    Task SeedTenantAsync(AppTenantInfo tenant, CancellationToken cancellationToken);
+    ValueTask SeedTenantAsync(AppTenantInfo tenant, CancellationToken cancellationToken);
 }

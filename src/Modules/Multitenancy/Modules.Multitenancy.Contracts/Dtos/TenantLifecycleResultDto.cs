@@ -6,7 +6,7 @@ public sealed class TenantLifecycleResultDto
 
     public bool IsActive { get; set; }
 
-    public DateTime? ValidUpto { get; set; }
+    public DateTimeOffset? ValidUptoOnUtc { get; set; }
 
     public string Message { get; set; } = string.Empty;
 }

@@ -13,9 +13,9 @@ public sealed class GetAuditsQuery : IPagedQuery, IQuery<PagedResponse<AuditSumm
 
     public string? Sort { get; set; }
 
-    public DateTime? FromUtc { get; set; }
+    public DateTimeOffset? FromOnUtc { get; set; }
 
-    public DateTime? ToUtc { get; set; }
+    public DateTimeOffset? ToOnUtc { get; set; }
 
     public string? TenantId { get; set; }
 

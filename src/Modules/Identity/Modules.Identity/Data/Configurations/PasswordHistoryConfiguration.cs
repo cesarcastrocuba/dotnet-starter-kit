@@ -1,3 +1,4 @@
+using Finbuckle.MultiTenant.EntityFrameworkCore.Extensions;
 using FSH.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,7 +13,13 @@ public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHis
 
         builder
             .ToTable("PasswordHistory", IdentityModuleConstants.SchemaName)
-            .HasKey(ph => ph.Id);
+            .IsMultiTenant();
+
+        builder.HasKey(ph => ph.Id);
+
+        builder.Property(x => x.TenantId)
+            .HasMaxLength(64)
+            .IsRequired();
 
         builder
             .Property(ph => ph.UserId)
@@ -24,7 +31,7 @@ public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHis
             .IsRequired();
 
         builder
-            .Property(ph => ph.CreatedAt)
+            .Property(ph => ph.CreatedOnUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Configure the foreign key relationship
@@ -36,6 +43,6 @@ public class PasswordHistoryConfiguration : IEntityTypeConfiguration<PasswordHis
 
         // Add index for efficient lookups
         builder.HasIndex(ph => ph.UserId);
-        builder.HasIndex(ph => new { ph.UserId, ph.CreatedAt });
+        builder.HasIndex(ph => new { ph.UserId, ph.CreatedOnUtc });
     }
 }

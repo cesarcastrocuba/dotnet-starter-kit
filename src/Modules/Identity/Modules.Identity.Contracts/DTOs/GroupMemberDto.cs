@@ -7,6 +7,6 @@ public class GroupMemberDto
     public string? Email { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
-    public DateTime AddedAt { get; set; }
+    public DateTimeOffset AddedAtOnUtc { get; set; }
     public string? AddedBy { get; set; }
 }

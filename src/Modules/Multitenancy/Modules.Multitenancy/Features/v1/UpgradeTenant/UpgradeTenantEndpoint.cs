@@ -17,20 +17,25 @@ public static class UpgradeTenantEndpoint
         .WithName("UpgradeTenant")
         .WithSummary("Upgrade tenant subscription")
         .RequirePermission(MultitenancyConstants.Permissions.Update)
-        .WithDescription("Extend or upgrade a tenant's subscription.");
+        .WithDescription("Extend or upgrade a tenant's subscription.")
+        .Produces<UpgradeTenantCommandResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .Produces(StatusCodes.Status403Forbidden);
     }
 
-    private static async Task<Results<Ok<UpgradeTenantCommandResponse>, BadRequest>> Handler(
+    private static async ValueTask<Results<Ok<UpgradeTenantCommandResponse>, BadRequest>> Handler(
         string id,
         UpgradeTenantCommand command,
-        IMediator dispatcher)
+        IMediator dispatcher,
+        CancellationToken cancellationToken)
     {
         if (!string.Equals(id, command.Tenant, StringComparison.Ordinal))
         {
             return TypedResults.BadRequest();
         }
 
-        var result = await dispatcher.Send(command);
+        var result = await dispatcher.Send(command, cancellationToken);
         return TypedResults.Ok(result);
     }
 }

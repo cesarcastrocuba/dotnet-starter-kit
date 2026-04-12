@@ -55,16 +55,19 @@ public sealed class SessionCleanupHostedService : BackgroundService
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
 
-        var cutoffDate = DateTime.UtcNow.AddDays(-_retentionDays);
+        var cutoffDate = DateTimeOffset.UtcNow.AddDays(-_retentionDays);
         var expiredSessions = await db.UserSessions
-            .Where(s => s.ExpiresAt < DateTime.UtcNow && s.ExpiresAt < cutoffDate)
+            .Where(s => s.ExpiresOnUtc < DateTimeOffset.UtcNow && s.ExpiresOnUtc < cutoffDate)
             .ToListAsync(cancellationToken);
 
         if (expiredSessions.Count > 0)
         {
             db.UserSessions.RemoveRange(expiredSessions);
             await db.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Cleaned up {Count} expired sessions", expiredSessions.Count);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Cleaned up {Count} expired sessions", expiredSessions.Count);
+            }
         }
     }
 }

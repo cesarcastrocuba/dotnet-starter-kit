@@ -13,12 +13,17 @@ public static class AddUsersToGroupEndpoint
 {
     public static RouteHandlerBuilder MapAddUsersToGroupEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/groups/{groupId:guid}/members", (Guid groupId, IMediator mediator, [FromBody] AddUsersRequest request, CancellationToken cancellationToken) =>
-            mediator.Send(new AddUsersToGroupCommand(groupId, request.UserIds), cancellationToken))
+        return endpoints.MapPost("/groups/{groupId:guid}/members", async (Guid groupId, IMediator mediator, [FromBody] AddUsersRequest request, CancellationToken cancellationToken) =>
+            TypedResults.Ok(await mediator.Send(new AddUsersToGroupCommand(groupId, request.UserIds), cancellationToken)))
         .WithName("AddUsersToGroup")
         .WithSummary("Add users to a group")
         .RequirePermission(IdentityPermissionConstants.Groups.ManageMembers)
-        .WithDescription("Add one or more users to a group. Returns count of added users and list of users already in the group.");
+        .WithDescription("Add one or more users to a group. Returns count of added users and list of users already in the group.")
+        .Produces<AddUsersToGroupResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .Produces(StatusCodes.Status403Forbidden)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status400BadRequest);
     }
 }
 

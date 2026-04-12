@@ -7,7 +7,7 @@ public interface IIntegrationEvent
 {
     Guid Id { get; }
 
-    DateTime OccurredOnUtc { get; }
+    DateTimeOffset OccurredOnUtc { get; }
 
     /// <summary>
     /// Tenant identifier for tenant-scoped events. Null for global events.

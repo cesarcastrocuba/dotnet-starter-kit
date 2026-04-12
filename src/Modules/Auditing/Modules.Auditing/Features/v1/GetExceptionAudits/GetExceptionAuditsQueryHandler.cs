@@ -37,14 +37,14 @@ public sealed class GetExceptionAuditsQueryHandler : IQueryHandler<GetExceptionA
 
     private static IQueryable<AuditRecord> ApplyDateFilters(IQueryable<AuditRecord> audits, GetExceptionAuditsQuery query)
     {
-        if (query.FromUtc.HasValue)
+        if (query.FromOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc >= query.FromUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc >= query.FromOnUtc.Value);
         }
 
-        if (query.ToUtc.HasValue)
+        if (query.ToOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc <= query.ToUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc <= query.ToOnUtc.Value);
         }
 
         return audits;
@@ -84,14 +84,14 @@ public sealed class GetExceptionAuditsQueryHandler : IQueryHandler<GetExceptionA
         return audits;
     }
 
-    private static async Task<IReadOnlyList<AuditSummaryDto>> ProjectToDto(IQueryable<AuditRecord> audits, CancellationToken cancellationToken)
+    private static async ValueTask<IReadOnlyList<AuditSummaryDto>> ProjectToDto(IQueryable<AuditRecord> audits, CancellationToken cancellationToken)
     {
         return await audits
-            .OrderByDescending(a => a.OccurredAtUtc)
+            .OrderByDescending(a => a.OccurredOnUtc)
             .Select(a => new AuditSummaryDto
             {
                 Id = a.Id,
-                OccurredAtUtc = a.OccurredAtUtc,
+                OccurredOnUtc = a.OccurredOnUtc,
                 EventType = (AuditEventType)a.EventType,
                 Severity = (AuditSeverity)a.Severity,
                 TenantId = a.TenantId,

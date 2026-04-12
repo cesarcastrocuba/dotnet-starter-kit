@@ -1,4 +1,4 @@
-﻿namespace FSH.Framework.Core.Abstractions;
+namespace FSH.Framework.Core.Abstractions;
 
 /// <summary>
 /// Represents a basic application user with common properties.
@@ -33,5 +33,5 @@ public interface IAppUser
     /// <summary>
     /// Gets the expiry time of the refresh token.
     /// </summary>
-    DateTime RefreshTokenExpiryTime { get; }
+    DateTimeOffset RefreshTokenExpiryOnUtc { get; }
 }

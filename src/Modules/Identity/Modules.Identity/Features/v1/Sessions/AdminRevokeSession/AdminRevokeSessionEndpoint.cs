@@ -17,16 +17,20 @@ public static class AdminRevokeSessionEndpoint
         .WithName("AdminRevokeSession")
         .WithSummary("Revoke a user's session (Admin)")
         .RequirePermission(IdentityPermissionConstants.Sessions.RevokeAll)
-        .WithDescription("Revoke a specific session for a user. Requires admin permission.");
+        .WithDescription("Revoke a specific session for a user. Requires admin permission.")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .Produces(StatusCodes.Status403Forbidden)
+        .Produces(StatusCodes.Status404NotFound);
     }
 
-    private static async Task<Results<Ok, NotFound>> Handler(
+    private static async ValueTask<Results<NoContent, NotFound>> Handler(
         Guid userId,
         Guid sessionId,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new AdminRevokeSessionCommand(userId, sessionId), cancellationToken);
-        return result ? TypedResults.Ok() : TypedResults.NotFound();
+        return result ? TypedResults.NoContent() : TypedResults.NotFound();
     }
 }

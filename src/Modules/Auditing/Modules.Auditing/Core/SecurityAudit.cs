@@ -19,10 +19,10 @@ public sealed class SecurityAudit : ISecurityAudit
             claims: new Dictionary<string, object?> { ["ip"] = ip },
             severity: AuditSeverity.Warning, source: "Identity", ct);
 
-    public ValueTask TokenIssuedAsync(string userId, string userName, string clientId, string tokenFingerprint, DateTime expiresUtc, CancellationToken ct = default)
+    public ValueTask TokenIssuedAsync(string userId, string userName, string clientId, string tokenFingerprint, DateTimeOffset expiresOnUtc, CancellationToken ct = default)
         => _audit.WriteSecurityAsync(SecurityAction.TokenIssued,
             subjectId: userId, clientId: clientId, authMethod: "Password", reasonCode: "",
-            claims: new Dictionary<string, object?> { ["fingerprint"] = tokenFingerprint, ["expiresAt"] = expiresUtc },
+            claims: new Dictionary<string, object?> { ["fingerprint"] = tokenFingerprint, ["expiresOnUtc"] = expiresOnUtc },
             severity: AuditSeverity.Information, source: "Identity", ct);
 
     public ValueTask TokenRevokedAsync(string userId, string clientId, string reason, CancellationToken ct = default)
@@ -30,4 +30,3 @@ public sealed class SecurityAudit : ISecurityAudit
             subjectId: userId, clientId: clientId, authMethod: "", reasonCode: reason, claims: null,
             severity: AuditSeverity.Information, source: "Identity", ct);
 }
-

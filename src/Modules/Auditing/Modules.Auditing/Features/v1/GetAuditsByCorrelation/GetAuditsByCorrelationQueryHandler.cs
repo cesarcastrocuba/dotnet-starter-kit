@@ -24,22 +24,22 @@ public sealed class GetAuditsByCorrelationQueryHandler : IQueryHandler<GetAudits
             .AsNoTracking()
             .Where(a => a.CorrelationId == query.CorrelationId);
 
-        if (query.FromUtc.HasValue)
+        if (query.FromOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc >= query.FromUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc >= query.FromOnUtc.Value);
         }
 
-        if (query.ToUtc.HasValue)
+        if (query.ToOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc <= query.ToUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc <= query.ToOnUtc.Value);
         }
 
         var list = await audits
-            .OrderBy(a => a.OccurredAtUtc)
+            .OrderBy(a => a.OccurredOnUtc)
             .Select(a => new AuditSummaryDto
             {
                 Id = a.Id,
-                OccurredAtUtc = a.OccurredAtUtc,
+                OccurredOnUtc = a.OccurredOnUtc,
                 EventType = (AuditEventType)a.EventType,
                 Severity = (AuditSeverity)a.Severity,
                 TenantId = a.TenantId,

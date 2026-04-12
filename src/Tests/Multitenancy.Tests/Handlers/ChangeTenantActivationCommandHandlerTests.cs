@@ -34,7 +34,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
             Id = tenantId,
             Name = "Test Tenant",
             IsActive = true,
-            ValidUpto = DateTime.UtcNow.AddYears(1),
+            ValidUptoOnUtc = DateTimeOffset.UtcNow.AddYears(1),
             AdminEmail = "admin@test.com"
         };
 
@@ -59,7 +59,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
     {
         // Arrange
         var tenantId = "tenant-1";
-        var validUpto = DateTime.UtcNow.AddYears(1);
+        var validUptoOnUtc = DateTimeOffset.UtcNow.AddYears(1);
         var command = new ChangeTenantActivationCommand(tenantId, true);
 
         _tenantService.ActivateAsync(tenantId, Arg.Any<CancellationToken>())
@@ -70,7 +70,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
                 Id = tenantId,
                 Name = "Test Tenant",
                 IsActive = true,
-                ValidUpto = validUpto,
+                ValidUptoOnUtc = validUptoOnUtc,
                 AdminEmail = "admin@test.com"
             });
 
@@ -81,7 +81,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
         result.ShouldNotBeNull();
         result.TenantId.ShouldBe(tenantId);
         result.IsActive.ShouldBeTrue();
-        result.ValidUpto.ShouldBe(validUpto);
+        result.ValidUptoOnUtc.ShouldBe(validUptoOnUtc);
     }
 
     #endregion
@@ -100,7 +100,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
             Id = tenantId,
             Name = "Test Tenant",
             IsActive = false,
-            ValidUpto = DateTime.MinValue,
+            ValidUptoOnUtc = DateTimeOffset.MinValue,
             AdminEmail = "admin@test.com"
         };
 
@@ -135,7 +135,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
                 Id = tenantId,
                 Name = "Test Tenant",
                 IsActive = false,
-                ValidUpto = DateTime.MinValue,
+                ValidUptoOnUtc = DateTimeOffset.MinValue,
                 AdminEmail = "admin@test.com"
             });
 

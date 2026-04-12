@@ -43,7 +43,7 @@ internal sealed class PasswordHistoryService : IPasswordHistoryService
 
         var recentPasswordHashes = await _db.Set<PasswordHistory>()
             .Where(ph => ph.UserId == userId)
-            .OrderByDescending(ph => ph.CreatedAt)
+            .OrderByDescending(ph => ph.CreatedOnUtc)
             .Take(passwordHistoryCount)
             .Select(ph => ph.PasswordHash)
             .ToListAsync(cancellationToken);
@@ -95,7 +95,7 @@ internal sealed class PasswordHistoryService : IPasswordHistoryService
         // Get all password history entries for the user, ordered by most recent
         var allPasswordHistories = await _db.Set<PasswordHistory>()
             .Where(ph => ph.UserId == userId)
-            .OrderByDescending(ph => ph.CreatedAt)
+            .OrderByDescending(ph => ph.CreatedOnUtc)
             .ToListAsync(cancellationToken);
 
         // Keep only the configured number of passwords

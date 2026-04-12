@@ -129,13 +129,13 @@
                                   Placeholder="Create a strong password"
                                   Required="true"
                                   RequiredError="Password is required"
-                                  InputType="@(_showPassword ? InputType.Text : InputType.Password)"
+                                  InputType="@(_showPassword? InputType.Text: InputType.Password)"
                                   Adornment="Adornment.End"
-                                  AdornmentIcon="@(_showPassword ? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
+                                  AdornmentIcon="@(_showPassword? Icons.Material.Filled.Visibility : Icons.Material.Filled.VisibilityOff)"
                                   OnAdornmentClick="TogglePasswordVisibility"
                                   AdornmentAriaLabel="Toggle password visibility"
                                   Variant="Variant.Outlined"
-                                  HelperText="Minimum 6 characters"
+                                  HelperText="Minimum 10 characters"
                                   Immediate="true" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
@@ -144,7 +144,7 @@
                                   Placeholder="Re-enter password"
                                   Required="true"
                                   RequiredError="Please confirm password"
-                                  InputType="@(_showPassword ? InputType.Text : InputType.Password)"
+                                  InputType="@(_showPassword? InputType.Text: InputType.Password)"
                                   Variant="Variant.Outlined"
                                   HelperText="Must match the password above"
                                   Immediate="true" />
@@ -156,7 +156,8 @@
                         <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
                             <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
                             <MudText Typo="Typo.body2">
-                                The user will receive an email to verify their account. You can manage their roles after creation.
+                                The user will receive an email to verify their account. You can manage their roles after
+                                creation.
                             </MudText>
                         </MudStack>
                     </MudAlert>
@@ -165,16 +166,10 @@
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Text"
-                   Color="Color.Default"
-                   OnClick="Cancel"
-                   Disabled="_busy">
+        <MudButton Variant="Variant.Text"       Color="Color.Default"          OnClick="Cancel"                   Disabled="_busy">
             Cancel
         </MudButton>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   OnClick="Submit"
-                   Disabled="_busy"
+        <MudButton Variant="Variant.Filled"                   Color="Color.Primary"                   OnClick="Submit"                   Disabled="_busy"
                    StartIcon="@(_busy ? null : Icons.Material.Filled.PersonAdd)">
             @if (_busy)
             {

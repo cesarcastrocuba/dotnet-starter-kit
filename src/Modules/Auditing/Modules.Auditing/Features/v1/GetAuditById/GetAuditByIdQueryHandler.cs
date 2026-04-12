@@ -45,8 +45,8 @@ public sealed class GetAuditByIdQueryHandler : IQueryHandler<GetAuditByIdQuery, 
         return new AuditDetailDto
         {
             Id = record.Id,
-            OccurredAtUtc = record.OccurredAtUtc,
-            ReceivedAtUtc = record.ReceivedAtUtc,
+            OccurredOnUtc = record.OccurredOnUtc,
+            ReceivedOnUtc = record.ReceivedOnUtc,
             EventType = (AuditEventType)record.EventType,
             Severity = (AuditSeverity)record.Severity,
             TenantId = record.TenantId,

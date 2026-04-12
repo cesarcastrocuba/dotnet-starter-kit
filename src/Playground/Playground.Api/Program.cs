@@ -1,4 +1,4 @@
-﻿using FSH.Framework.Web;
+using FSH.Framework.Web;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Auditing;
 using FSH.Modules.Identity;
@@ -67,3 +67,9 @@ app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
    .WithTags("PlayGround")
    .AllowAnonymous();
 await app.RunAsync();
+
+#pragma warning disable CA1515 // type can be made internal
+#pragma warning disable S1118 // Add protected constructor
+public partial class Program { }
+#pragma warning restore S1118
+#pragma warning restore CA1515

@@ -20,7 +20,7 @@ src/
 │   ├── Multitenancy/   # Tenant management (Finbuckle)
 │   └── Auditing/       # Audit logging
 ├── Playground/         # Reference application
-└── Tests/              # Architecture + unit tests
+└── Tests/              # Architecture, Integration, Functional & Spec Tests
 ```
 
 ## The Pattern
@@ -64,6 +64,7 @@ Delegate complex tasks to specialized agents.
 
 | Agent | Expertise |
 |-------|----------|
+| `spec-coordinator` | Orchestrate the 5-step Spec-Driven Development (SDD) process for features/bugs |
 | `code-reviewer` | Review changes against FSH patterns + architecture rules |
 | `feature-scaffolder` | Generate complete feature slices from requirements |
 | `module-creator` | Create new modules with contracts, persistence, DI setup |

@@ -1,3 +1,3 @@
-﻿namespace FSH.Modules.Identity.Contracts.DTOs;
+namespace FSH.Modules.Identity.Contracts.DTOs;
 
-public record TokenDto(string Token, string RefreshToken, DateTime RefreshTokenExpiryTime);
+public record TokenDto(string Token, string RefreshToken, DateTimeOffset RefreshTokenExpiryOnUtc);

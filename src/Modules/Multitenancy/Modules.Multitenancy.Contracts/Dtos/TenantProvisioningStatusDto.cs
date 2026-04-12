@@ -3,8 +3,8 @@ namespace FSH.Modules.Multitenancy.Contracts.Dtos;
 public sealed record TenantProvisioningStepDto(
     string Step,
     string Status,
-    DateTime? StartedUtc,
-    DateTime? CompletedUtc,
+    DateTimeOffset? StartedOnUtc,
+    DateTimeOffset? CompletedOnUtc,
     string? Error);
 
 public sealed record TenantProvisioningStatusDto(
@@ -13,7 +13,7 @@ public sealed record TenantProvisioningStatusDto(
     string CorrelationId,
     string? CurrentStep,
     string? Error,
-    DateTime CreatedUtc,
-    DateTime? StartedUtc,
-    DateTime? CompletedUtc,
+    DateTimeOffset CreatedOnUtc,
+    DateTimeOffset? StartedOnUtc,
+    DateTimeOffset? CompletedOnUtc,
     IReadOnlyCollection<TenantProvisioningStepDto> Steps);

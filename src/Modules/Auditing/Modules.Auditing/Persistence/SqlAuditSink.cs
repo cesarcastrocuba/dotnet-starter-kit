@@ -48,8 +48,8 @@ public sealed class SqlAuditSink : IAuditSink
             var records = group.Select(e => new AuditRecord
             {
                 Id = e.Id,
-                OccurredAtUtc = e.OccurredAtUtc,
-                ReceivedAtUtc = e.ReceivedAtUtc,
+                OccurredOnUtc = e.OccurredOnUtc,
+                ReceivedOnUtc = e.ReceivedOnUtc,
                 EventType = (int)e.EventType,
                 Severity = (byte)e.Severity,
                 TenantId = e.TenantId,
@@ -67,7 +67,10 @@ public sealed class SqlAuditSink : IAuditSink
             db.AuditRecords.AddRange(records);
             await db.SaveChangesAsync(ct).ConfigureAwait(false);
 
-            _log.LogInformation("Wrote {Count} audit records for tenant {TenantId}.", records.Count, tenantInfo.Id);
+            if (_log.IsEnabled(LogLevel.Information))
+            {
+                _log.LogInformation("Wrote {Count} audit records for tenant {TenantId}.", records.Count, tenantInfo.Id);
+            }
         }
     }
 }

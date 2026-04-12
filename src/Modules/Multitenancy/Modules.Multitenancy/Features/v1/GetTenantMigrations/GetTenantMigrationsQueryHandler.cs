@@ -38,7 +38,7 @@ public sealed class GetTenantMigrationsQueryHandler
                 TenantId = tenant.Id,
                 Name = tenant.Name!,
                 IsActive = tenant.IsActive,
-                ValidUpto = tenant.ValidUpto
+                ValidUptoOnUtc = tenant.ValidUptoOnUtc
             };
 
             try

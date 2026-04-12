@@ -16,8 +16,9 @@ public class AuditRecordConfiguration : IEntityTypeConfiguration<AuditRecord>
         builder.Property(x => x.Severity).HasConversion<byte>();
         builder.Property(x => x.Tags).HasConversion<long>();
         builder.Property(x => x.PayloadJson).HasColumnType("jsonb");
+        builder.Property(x => x.TenantId).HasMaxLength(64);
         builder.HasIndex(x => x.TenantId);
         builder.HasIndex(x => x.EventType);
-        builder.HasIndex(x => x.OccurredAtUtc);
+        builder.HasIndex(x => x.OccurredOnUtc);
     }
 }

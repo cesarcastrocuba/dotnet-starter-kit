@@ -24,14 +24,14 @@ public sealed class GetSecurityAuditsQueryHandler : IQueryHandler<GetSecurityAud
             .AsNoTracking()
             .Where(a => a.EventType == (int)AuditEventType.Security);
 
-        if (query.FromUtc.HasValue)
+        if (query.FromOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc >= query.FromUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc >= query.FromOnUtc.Value);
         }
 
-        if (query.ToUtc.HasValue)
+        if (query.ToOnUtc.HasValue)
         {
-            audits = audits.Where(a => a.OccurredAtUtc <= query.ToUtc.Value);
+            audits = audits.Where(a => a.OccurredOnUtc <= query.ToOnUtc.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(query.UserId))
@@ -52,11 +52,11 @@ public sealed class GetSecurityAuditsQueryHandler : IQueryHandler<GetSecurityAud
         }
 
         var list = await audits
-            .OrderByDescending(a => a.OccurredAtUtc)
+            .OrderByDescending(a => a.OccurredOnUtc)
             .Select(a => new AuditSummaryDto
             {
                 Id = a.Id,
-                OccurredAtUtc = a.OccurredAtUtc,
+                OccurredOnUtc = a.OccurredOnUtc,
                 EventType = (AuditEventType)a.EventType,
                 Severity = (AuditSeverity)a.Severity,
                 TenantId = a.TenantId,

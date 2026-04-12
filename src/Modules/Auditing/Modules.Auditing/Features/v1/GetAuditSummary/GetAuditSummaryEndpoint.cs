@@ -1,5 +1,6 @@
 using FSH.Framework.Shared.Identity;
 using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Modules.Auditing.Contracts.Dtos;
 using FSH.Modules.Auditing.Contracts.v1.GetAuditSummary;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -16,11 +17,14 @@ public static class GetAuditSummaryEndpoint
         return group.MapGet(
                 "/summary",
                 async ([AsParameters] GetAuditSummaryQuery query, IMediator mediator, CancellationToken cancellationToken) =>
-                    await mediator.Send(query, cancellationToken))
+                    TypedResults.Ok(await mediator.Send(query, cancellationToken)))
             .WithName("GetAuditSummary")
             .WithSummary("Get audit summary")
             .WithDescription("Retrieve aggregate counts of audit events by type, severity, source, and tenant.")
-            .RequirePermission(AuditingPermissionConstants.View);
+            .RequirePermission(AuditingPermissionConstants.View)
+            .Produces<AuditSummaryAggregateDto>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden);
     }
 }
 

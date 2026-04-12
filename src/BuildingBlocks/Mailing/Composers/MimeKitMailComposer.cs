@@ -23,8 +23,9 @@ public class MimeKitEmailComposer(IOptions<MailOptions> settings) : IMailCompose
 
     private void ConfigureSender(MimeMessage email, MailRequest request)
     {
-        email.From.Add(new MailboxAddress(_settings.DisplayName, request.From ?? _settings.From));
-        email.Sender = new MailboxAddress(request.DisplayName ?? _settings.DisplayName, request.From ?? _settings.From);
+        string fromAddress = request.From ?? _settings.From ?? throw new InvalidOperationException("Sender email address is not configured.");
+        email.From.Add(new MailboxAddress(_settings.DisplayName, fromAddress));
+        email.Sender = new MailboxAddress(request.DisplayName ?? _settings.DisplayName, fromAddress);
     }
 
     private static void ConfigureRecipients(MimeMessage email, MailRequest request)

@@ -14,12 +14,26 @@ public sealed class TenantProvisioningStepTests
     {
         // Arrange
         var provisioningId = Guid.NewGuid();
+        var tenantId = "tenant-1";
 
         // Act
-        var step = new TenantProvisioningStep(provisioningId, TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(provisioningId, tenantId, TenantProvisioningStepName.Database);
 
         // Assert
         step.ProvisioningId.ShouldBe(provisioningId);
+    }
+
+    [Fact]
+    public void Constructor_Should_SetTenantId()
+    {
+        // Arrange
+        var tenantId = "tenant-1";
+
+        // Act
+        var step = new TenantProvisioningStep(Guid.NewGuid(), tenantId, TenantProvisioningStepName.Database);
+
+        // Assert
+        step.TenantId.ShouldBe(tenantId);
     }
 
     [Fact]
@@ -29,7 +43,7 @@ public sealed class TenantProvisioningStepTests
         var provisioningId = Guid.NewGuid();
 
         // Act
-        var step = new TenantProvisioningStep(provisioningId, TenantProvisioningStepName.Migrations);
+        var step = new TenantProvisioningStep(provisioningId, "tenant-1", TenantProvisioningStepName.Migrations);
 
         // Assert
         step.Step.ShouldBe(TenantProvisioningStepName.Migrations);
@@ -39,7 +53,7 @@ public sealed class TenantProvisioningStepTests
     public void Constructor_Should_SetStatusToPending()
     {
         // Act
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
 
         // Assert
         step.Status.ShouldBe(TenantProvisioningStatus.Pending);
@@ -49,7 +63,7 @@ public sealed class TenantProvisioningStepTests
     public void Constructor_Should_GenerateNewId()
     {
         // Act
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
 
         // Assert
         step.Id.ShouldNotBe(Guid.Empty);
@@ -59,12 +73,12 @@ public sealed class TenantProvisioningStepTests
     public void Constructor_Should_InitializeNullFields()
     {
         // Act
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
 
         // Assert
         step.Error.ShouldBeNull();
-        step.StartedUtc.ShouldBeNull();
-        step.CompletedUtc.ShouldBeNull();
+        step.StartedOnUtc.ShouldBeNull();
+        step.CompletedOnUtc.ShouldBeNull();
     }
 
     [Theory]
@@ -75,7 +89,7 @@ public sealed class TenantProvisioningStepTests
     public void Constructor_Should_AcceptAllStepNames(TenantProvisioningStepName stepName)
     {
         // Act
-        var step = new TenantProvisioningStep(Guid.NewGuid(), stepName);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", stepName);
 
         // Assert
         step.Step.ShouldBe(stepName);
@@ -89,7 +103,7 @@ public sealed class TenantProvisioningStepTests
     public void MarkRunning_Should_SetStatusToRunning()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
 
         // Act
         step.MarkRunning();
@@ -99,35 +113,35 @@ public sealed class TenantProvisioningStepTests
     }
 
     [Fact]
-    public void MarkRunning_Should_SetStartedUtc_OnFirstCall()
+    public void MarkRunning_Should_SetStartedOnUtc_OnFirstCall()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
-        var before = DateTime.UtcNow;
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         step.MarkRunning();
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        step.StartedUtc.ShouldNotBeNull();
-        step.StartedUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
-        step.StartedUtc.Value.ShouldBeLessThanOrEqualTo(after);
+        step.StartedOnUtc.ShouldNotBeNull();
+        step.StartedOnUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
+        step.StartedOnUtc.Value.ShouldBeLessThanOrEqualTo(after);
     }
 
     [Fact]
-    public void MarkRunning_Should_NotOverwriteStartedUtc_OnSubsequentCalls()
+    public void MarkRunning_Should_NotOverwriteStartedOnUtc_OnSubsequentCalls()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
         step.MarkRunning();
-        var firstStartedUtc = step.StartedUtc;
+        var firstStartedOnUtc = step.StartedOnUtc;
 
         // Act - Call again
         step.MarkRunning();
 
-        // Assert - StartedUtc should not change (due to ??= operator)
-        step.StartedUtc.ShouldBe(firstStartedUtc);
+        // Assert - StartedOnUtc should not change (due to ??= operator)
+        step.StartedOnUtc.ShouldBe(firstStartedOnUtc);
     }
 
     #endregion
@@ -138,7 +152,7 @@ public sealed class TenantProvisioningStepTests
     public void MarkCompleted_Should_SetStatusToCompleted()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
         step.MarkRunning();
 
         // Act
@@ -149,20 +163,20 @@ public sealed class TenantProvisioningStepTests
     }
 
     [Fact]
-    public void MarkCompleted_Should_SetCompletedUtc()
+    public void MarkCompleted_Should_SetCompletedOnUtc()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
-        var before = DateTime.UtcNow;
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         step.MarkCompleted();
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        step.CompletedUtc.ShouldNotBeNull();
-        step.CompletedUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
-        step.CompletedUtc.Value.ShouldBeLessThanOrEqualTo(after);
+        step.CompletedOnUtc.ShouldNotBeNull();
+        step.CompletedOnUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
+        step.CompletedOnUtc.Value.ShouldBeLessThanOrEqualTo(after);
     }
 
     #endregion
@@ -173,7 +187,7 @@ public sealed class TenantProvisioningStepTests
     public void MarkFailed_Should_SetStatusToFailed()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
 
         // Act
         step.MarkFailed("Connection failed");
@@ -186,7 +200,7 @@ public sealed class TenantProvisioningStepTests
     public void MarkFailed_Should_SetError()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
         var error = "Database connection timeout";
 
         // Act
@@ -197,20 +211,20 @@ public sealed class TenantProvisioningStepTests
     }
 
     [Fact]
-    public void MarkFailed_Should_SetCompletedUtc()
+    public void MarkFailed_Should_SetCompletedOnUtc()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Database);
-        var before = DateTime.UtcNow;
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Database);
+        var before = DateTimeOffset.UtcNow;
 
         // Act
         step.MarkFailed("Error");
-        var after = DateTime.UtcNow;
+        var after = DateTimeOffset.UtcNow;
 
         // Assert
-        step.CompletedUtc.ShouldNotBeNull();
-        step.CompletedUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
-        step.CompletedUtc.Value.ShouldBeLessThanOrEqualTo(after);
+        step.CompletedOnUtc.ShouldNotBeNull();
+        step.CompletedOnUtc.Value.ShouldBeGreaterThanOrEqualTo(before);
+        step.CompletedOnUtc.Value.ShouldBeLessThanOrEqualTo(after);
     }
 
     #endregion
@@ -221,25 +235,25 @@ public sealed class TenantProvisioningStepTests
     public void Step_Should_SupportSuccessfulLifecycle()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Migrations);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Migrations);
         step.Status.ShouldBe(TenantProvisioningStatus.Pending);
 
         // Act - Running
         step.MarkRunning();
         step.Status.ShouldBe(TenantProvisioningStatus.Running);
-        step.StartedUtc.ShouldNotBeNull();
+        step.StartedOnUtc.ShouldNotBeNull();
 
         // Act - Completed
         step.MarkCompleted();
         step.Status.ShouldBe(TenantProvisioningStatus.Completed);
-        step.CompletedUtc.ShouldNotBeNull();
+        step.CompletedOnUtc.ShouldNotBeNull();
     }
 
     [Fact]
     public void Step_Should_SupportFailureLifecycle()
     {
         // Arrange
-        var step = new TenantProvisioningStep(Guid.NewGuid(), TenantProvisioningStepName.Seeding);
+        var step = new TenantProvisioningStep(Guid.NewGuid(), "tenant-1", TenantProvisioningStepName.Seeding);
 
         // Act - Running
         step.MarkRunning();
@@ -252,7 +266,7 @@ public sealed class TenantProvisioningStepTests
         step.Status.ShouldBe(TenantProvisioningStatus.Failed);
         step.Error.ShouldNotBeNull();
         step.Error.ShouldContain("unique constraint violation");
-        step.CompletedUtc.ShouldNotBeNull();
+        step.CompletedOnUtc.ShouldNotBeNull();
     }
 
     #endregion

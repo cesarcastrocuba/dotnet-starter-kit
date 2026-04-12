@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace FSH.Playground.Migrations.PostgreSQL.Audit
+namespace FSH.Playground.Migrations.PostgreSQL.Auditing
 {
     /// <inheritdoc />
     public partial class AddAudits : Migration

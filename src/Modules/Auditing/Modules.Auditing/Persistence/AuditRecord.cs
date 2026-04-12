@@ -3,8 +3,8 @@ namespace FSH.Modules.Auditing;
 public sealed class AuditRecord
 {
     public Guid Id { get; set; }
-    public DateTime OccurredAtUtc { get; set; }
-    public DateTime ReceivedAtUtc { get; set; }
+    public DateTimeOffset OccurredOnUtc { get; set; }
+    public DateTimeOffset ReceivedOnUtc { get; set; }
 
     public int EventType { get; set; }
     public byte Severity { get; set; }

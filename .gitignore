@@ -488,7 +488,7 @@ $RECYCLE.BIN/
 /.bmad
 
 team/
-docs/
+# docs/
 spec-os/
 /PLAN.md
 **/nul
@@ -499,3 +499,6 @@ tmpclaude**
 
 # Auto Claude data directory
 .auto-claude/
+
+# Aspire dashboard local settings (user-specific, not for version control)
+.aspire/

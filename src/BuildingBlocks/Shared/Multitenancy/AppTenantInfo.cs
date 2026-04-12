@@ -31,22 +31,22 @@ public class AppTenantInfo : TenantInfo, IAppTenantInfo
         Issuer = issuer;
 
         // Add Default 1 Month Validity for all new tenants. Something like a DEMO period for tenants.
-        ValidUpto = DateTime.UtcNow.AddMonths(1);
+        ValidUptoOnUtc = DateTimeOffset.UtcNow.AddMonths(1);
     }
 
     public string ConnectionString { get; set; } = string.Empty;
     public string AdminEmail { get; set; } = default!;
     public bool IsActive { get; set; }
-    public DateTime ValidUpto { get; set; }
+    public DateTimeOffset ValidUptoOnUtc { get; set; }
     public string? Issuer { get; set; }
 
     public void AddValidity(int months) =>
-        ValidUpto = ValidUpto.AddMonths(months);
+        ValidUptoOnUtc = ValidUptoOnUtc.AddMonths(months);
 
-    public void SetValidity(in DateTime validTill)
+    public void SetValidity(in DateTimeOffset validOnUtc)
     {
-        var normalized = validTill;
-        ValidUpto = ValidUpto < normalized
+        var normalized = validOnUtc;
+        ValidUptoOnUtc = ValidUptoOnUtc < normalized
             ? normalized
             : throw new InvalidOperationException("Subscription cannot be backdated.");
     }

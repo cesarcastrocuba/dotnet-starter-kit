@@ -95,7 +95,7 @@ internal sealed class UserPasswordService(
         await db.SaveChangesAsync();
 
         // Update password expiry date
-        await passwordExpiryService.UpdateLastPasswordChangeDateAsync(userId);
+        await passwordExpiryService.UpdateLastPasswordChangeOnUtcAsync(userId);
 
         // Save to history
         await passwordHistoryService.SavePasswordHistoryAsync(userId);

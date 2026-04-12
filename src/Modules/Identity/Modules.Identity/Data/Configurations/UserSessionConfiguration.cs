@@ -1,3 +1,4 @@
+using Finbuckle.MultiTenant.EntityFrameworkCore.Extensions;
 using FSH.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,7 +13,13 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
 
         builder
             .ToTable("UserSessions", IdentityModuleConstants.SchemaName)
-            .HasKey(s => s.Id);
+            .IsMultiTenant();
+
+        builder.HasKey(s => s.Id);
+
+        builder.Property(x => x.TenantId)
+            .HasMaxLength(64)
+            .IsRequired();
 
         builder
             .Property(s => s.UserId)
@@ -63,7 +70,7 @@ public class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
             .HasMaxLength(500);
 
         builder
-            .Property(s => s.CreatedAt)
+            .Property(s => s.CreatedOnUtc)
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         builder

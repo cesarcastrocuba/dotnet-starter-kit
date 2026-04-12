@@ -16,6 +16,6 @@ public interface IPasswordExpiryService
     /// <summary>Get expiry status with detailed information.</summary>
     Task<PasswordExpiryStatusDto> GetPasswordExpiryStatusAsync(string userId, CancellationToken cancellationToken = default);
 
-    /// <summary>Update the last password change date for a user.</summary>
-    Task UpdateLastPasswordChangeDateAsync(string userId, CancellationToken cancellationToken = default);
+    /// <summary>Update the last password change date for a user in UTC.</summary>
+    Task UpdateLastPasswordChangeOnUtcAsync(string userId, CancellationToken cancellationToken = default);
 }

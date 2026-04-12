@@ -1,4 +1,4 @@
-﻿using FSH.Modules.Multitenancy.Contracts;
+using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Contracts.v1.UpgradeTenant;
 using Mediator;
 
@@ -10,7 +10,7 @@ public sealed class UpgradeTenantCommandHandler(ITenantService service)
     public async ValueTask<UpgradeTenantCommandResponse> Handle(UpgradeTenantCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
-        var validUpto = await service.UpgradeSubscriptionAsync(command.Tenant, command.ExtendedExpiryDate, cancellationToken).ConfigureAwait(false);
+        var validUpto = await service.UpgradeSubscriptionAsync(command.Tenant, command.ExtendedExpiryOnUtc, cancellationToken).ConfigureAwait(false);
         return new UpgradeTenantCommandResponse(validUpto, command.Tenant);
     }
 }

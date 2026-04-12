@@ -16,10 +16,11 @@ public sealed class EfCoreInboxStore<TDbContext> : IInboxStore
         _dbContext = dbContext;
     }
 
-    public async Task<bool> HasProcessedAsync(Guid eventId, string handlerName, CancellationToken ct = default)
+    public async Task<bool> HasProcessedAsync(Guid eventId, string handlerName, string? tenantId, CancellationToken ct = default)
     {
         return await _dbContext.Set<InboxMessage>()
-            .AnyAsync(i => i.Id == eventId && i.HandlerName == handlerName, ct)
+            .IgnoreQueryFilters()
+            .AnyAsync(i => i.Id == eventId && i.HandlerName == handlerName && i.TenantId == tenantId, ct)
             .ConfigureAwait(false);
     }
 
@@ -30,8 +31,8 @@ public sealed class EfCoreInboxStore<TDbContext> : IInboxStore
             Id = eventId,
             EventType = eventType,
             HandlerName = handlerName,
-            TenantId = tenantId,
-            ProcessedOnUtc = DateTime.UtcNow
+            TenantId = tenantId ?? string.Empty,
+            ProcessedOnUtc = DateTimeOffset.UtcNow
         };
 
         await _dbContext.Set<InboxMessage>().AddAsync(message, ct).ConfigureAwait(false);

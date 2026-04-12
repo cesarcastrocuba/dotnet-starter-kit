@@ -116,10 +116,10 @@
                 </CellTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Email" Title="Email" Sortable="true" />
-            <TemplateColumn Title="Added" Sortable="true" SortBy="@(x => x.AddedAt)">
+            <TemplateColumn Title="Added" Sortable="true" SortBy="@(x => x.AddedAtOnUtc)">
                 <CellTemplate>
                     <MudStack Spacing="0">
-                        <MudText Typo="Typo.body2">@context.Item.AddedAt.LocalDateTime.ToString("MMM d, yyyy")</MudText>
+                        <MudText Typo="Typo.body2">@context.Item.AddedAtOnUtc.LocalDateTime.ToString("MMM d, yyyy")</MudText>
                         <MudText Typo="Typo.caption" Class="text-muted">by @(context.Item.AddedBy ?? "System")</MudText>
                     </MudStack>
                 </CellTemplate>

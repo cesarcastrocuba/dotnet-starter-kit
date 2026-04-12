@@ -2,6 +2,7 @@ using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Multitenancy.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Finbuckle.MultiTenant.EntityFrameworkCore.Extensions;
 
 namespace FSH.Modules.Multitenancy.Data.Configurations;
 
@@ -12,6 +13,8 @@ public class TenantThemeConfiguration : IEntityTypeConfiguration<TenantTheme>
         ArgumentNullException.ThrowIfNull(builder);
 
         builder.ToTable("TenantThemes", MultitenancyConstants.Schema);
+
+        builder.IsMultiTenant();
 
         builder.HasKey(t => t.Id);
 

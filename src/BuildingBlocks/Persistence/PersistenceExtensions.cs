@@ -1,10 +1,11 @@
-﻿using FSH.Framework.Shared.Persistence;
+using FSH.Framework.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using FSH.Framework.Persistence.Inteceptors;
 
 namespace FSH.Framework.Persistence;
 
@@ -28,7 +29,26 @@ public static class PersistenceExtensions
             .ValidateDataAnnotations()
             .Validate(o => !string.IsNullOrWhiteSpace(o.Provider), "DatabaseOptions.Provider is required.")
             .ValidateOnStart();
+
+        // IMPORTANT: DatabasePrecreatorHostedService MUST be registered before any IDbInitializer
+        // hosted services. IHostedService implementations execute in DI registration order.
+        // This ensures the target database exists before EF Core MigrateAsync() is called.
+        services.AddHostedService<DatabasePrecreatorHostedService>();
         services.AddHostedService<DatabaseOptionsStartupLogger>();
+        services.AddPersistenceServices();
+        return services;
+    }
+
+    /// <summary>
+    /// Adds core persistence services including interceptors and time provider.
+    /// </summary>
+    /// <param name="services">The service collection to add services to.</param>
+    /// <returns>The service collection for method chaining.</returns>
+    public static IServiceCollection AddPersistenceServices(this IServiceCollection services)
+    {
+        services.AddSingleton(TimeProvider.System);
+        services.AddScoped<ISaveChangesInterceptor, AuditableEntitySaveChangesInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, DomainEventsInterceptor>();
         return services;
     }
 

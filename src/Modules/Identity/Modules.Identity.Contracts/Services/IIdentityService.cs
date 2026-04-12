@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
 namespace FSH.Modules.Identity.Contracts.Services;
 
@@ -24,5 +24,5 @@ public interface IIdentityService
     /// <summary>
     /// Persists a hashed refresh token for the specified subject.
     /// </summary>
-    Task StoreRefreshTokenAsync(string subject, string refreshToken, DateTime expiresAtUtc, CancellationToken ct = default);
+    Task StoreRefreshTokenAsync(string subject, string refreshToken, DateTimeOffset expiresOnUtc, CancellationToken ct = default);
 }

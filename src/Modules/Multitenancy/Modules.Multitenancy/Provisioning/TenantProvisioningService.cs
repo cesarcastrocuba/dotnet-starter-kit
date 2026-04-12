@@ -47,10 +47,10 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
         var correlationId = Guid.NewGuid().ToString();
         var provisioning = new TenantProvisioning(tenant.Id, correlationId);
 
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.Database));
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.Migrations));
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.Seeding));
-        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, TenantProvisioningStepName.CacheWarm));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.Database));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.Migrations));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.Seeding));
+        provisioning.Steps.Add(new TenantProvisioningStep(provisioning.Id, provisioning.TenantId, TenantProvisioningStepName.CacheWarm));
 
         _dbContext.Add(provisioning);
         await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -75,9 +75,10 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
     public async Task<TenantProvisioning?> GetLatestAsync(string tenantId, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<TenantProvisioning>()
+            .IgnoreQueryFilters()
             .Include(p => p.Steps)
             .Where(p => p.TenantId == tenantId)
-            .OrderByDescending(p => p.CreatedUtc)
+            .OrderByDescending(p => p.CreatedOnUtc)
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
     }
@@ -168,6 +169,7 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
     private async Task<TenantProvisioning> RequireAsync(string tenantId, string correlationId, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<TenantProvisioning>()
+            .IgnoreQueryFilters()
             .Include(p => p.Steps)
             .FirstOrDefaultAsync(p => p.TenantId == tenantId && p.CorrelationId == correlationId, cancellationToken)
             .ConfigureAwait(false)
@@ -191,7 +193,7 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
     {
         using var scope = _scopeFactory.CreateScope();
         var job = scope.ServiceProvider.GetRequiredService<TenantProvisioningJob>();
-        await job.RunAsync(tenantId, correlationId).ConfigureAwait(false);
+        await job.RunAsync(tenantId, correlationId, cancellationToken).ConfigureAwait(false);
     }
 
     private static TenantProvisioningStatusDto ToDto(TenantProvisioning provisioning)
@@ -201,8 +203,8 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
             .Select(s => new TenantProvisioningStepDto(
                 s.Step.ToString(),
                 s.Status.ToString(),
-                s.StartedUtc,
-                s.CompletedUtc,
+                s.StartedOnUtc,
+                s.CompletedOnUtc,
                 s.Error))
             .ToArray();
 
@@ -212,9 +214,9 @@ public sealed class TenantProvisioningService : ITenantProvisioningService
             provisioning.CorrelationId,
             provisioning.CurrentStep,
             provisioning.Error,
-            provisioning.CreatedUtc,
-            provisioning.StartedUtc,
-            provisioning.CompletedUtc,
+            provisioning.CreatedOnUtc,
+            provisioning.StartedOnUtc,
+            provisioning.CompletedOnUtc,
             steps);
     }
 }

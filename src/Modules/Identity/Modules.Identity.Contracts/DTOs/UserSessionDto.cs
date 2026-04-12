@@ -12,9 +12,9 @@ public class UserSessionDto
     public string? BrowserVersion { get; set; }
     public string? OperatingSystem { get; set; }
     public string? OsVersion { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime LastActivityAt { get; set; }
-    public DateTime ExpiresAt { get; set; }
+    public DateTimeOffset CreatedOnUtc { get; set; }
+    public DateTimeOffset LastActivityOnUtc { get; set; }
+    public DateTimeOffset ExpiresOnUtc { get; set; }
     public bool IsActive { get; set; }
     public bool IsCurrentSession { get; set; }
 }

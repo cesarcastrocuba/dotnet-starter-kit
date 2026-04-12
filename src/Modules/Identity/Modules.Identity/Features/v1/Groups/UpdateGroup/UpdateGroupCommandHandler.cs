@@ -12,12 +12,10 @@ namespace FSH.Modules.Identity.Features.v1.Groups.UpdateGroup;
 public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupCommand, GroupDto>
 {
     private readonly IdentityDbContext _dbContext;
-    private readonly ICurrentUser _currentUser;
 
-    public UpdateGroupCommandHandler(IdentityDbContext dbContext, ICurrentUser currentUser)
+    public UpdateGroupCommandHandler(IdentityDbContext dbContext)
     {
         _dbContext = dbContext;
-        _currentUser = currentUser;
     }
 
     public async ValueTask<GroupDto> Handle(UpdateGroupCommand command, CancellationToken cancellationToken)
@@ -28,9 +26,8 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
         await ValidateUniqueNameAsync(command.Id, command.Name, cancellationToken);
         await ValidateRoleIdsAsync(command.RoleIds, cancellationToken);
 
-        var userId = _currentUser.GetUserId().ToString();
-        group.Update(command.Name, command.Description, userId);
-        group.SetAsDefault(command.IsDefault, userId);
+        group.Update(command.Name, command.Description);
+        group.SetAsDefault(command.IsDefault);
 
         var newRoleIds = UpdateRoleAssignments(group, command.RoleIds);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -38,7 +35,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
         return await BuildResponseAsync(group, newRoleIds, cancellationToken);
     }
 
-    private async Task<Group> GetGroupAsync(Guid id, CancellationToken cancellationToken)
+    private async ValueTask<Group> GetGroupAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _dbContext.Groups
             .Include(g => g.GroupRoles)
@@ -46,7 +43,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
             ?? throw new NotFoundException($"Group with ID '{id}' not found.");
     }
 
-    private async Task ValidateUniqueNameAsync(Guid excludeId, string name, CancellationToken cancellationToken)
+    private async ValueTask ValidateUniqueNameAsync(Guid excludeId, string name, CancellationToken cancellationToken)
     {
         var nameExists = await _dbContext.Groups
             .AnyAsync(g => g.Name == name && g.Id != excludeId, cancellationToken);
@@ -57,7 +54,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
         }
     }
 
-    private async Task ValidateRoleIdsAsync(IReadOnlyList<string>? roleIds, CancellationToken cancellationToken)
+    private async ValueTask ValidateRoleIdsAsync(IReadOnlyList<string>? roleIds, CancellationToken cancellationToken)
     {
         if (roleIds is not { Count: > 0 })
         {
@@ -89,13 +86,13 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
 
         foreach (var roleId in newRoleIds.Where(id => !currentRoleIds.Contains(id)))
         {
-            group.GroupRoles.Add(GroupRole.Create(group.Id, roleId));
+            group.GroupRoles.Add(GroupRole.Create(group.Id, roleId, group.TenantId));
         }
 
         return newRoleIds;
     }
 
-    private async Task<GroupDto> BuildResponseAsync(Group group, HashSet<string> roleIds, CancellationToken cancellationToken)
+    private async ValueTask<GroupDto> BuildResponseAsync(Group group, HashSet<string> roleIds, CancellationToken cancellationToken)
     {
         var memberCount = await _dbContext.UserGroups
             .CountAsync(ug => ug.GroupId == group.Id, cancellationToken);
@@ -117,7 +114,7 @@ public sealed class UpdateGroupCommandHandler : ICommandHandler<UpdateGroupComma
             MemberCount = memberCount,
             RoleIds = roleIds.ToList().AsReadOnly(),
             RoleNames = roleNames.AsReadOnly(),
-            CreatedAt = group.CreatedAt
+            CreatedOnUtc = group.CreatedOnUtc
         };
     }
 }

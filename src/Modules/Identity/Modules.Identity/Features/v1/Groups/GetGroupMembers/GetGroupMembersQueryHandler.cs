@@ -41,7 +41,7 @@ public sealed class GetGroupMembersQueryHandler : IQueryHandler<GetGroupMembersQ
                     Email = u.Email,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
-                    AddedAt = ug.AddedAt,
+                    AddedAtOnUtc = ug.AddedAtOnUtc,
                     AddedBy = ug.AddedBy
                 })
             .OrderBy(m => m.UserName)

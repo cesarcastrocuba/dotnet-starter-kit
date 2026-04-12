@@ -1,9 +1,9 @@
+using FSH.Framework.Core.Domain;
+
 namespace FSH.Modules.Multitenancy.Provisioning;
 
-public sealed class TenantProvisioning
+public sealed class TenantProvisioning : BaseEntity<Guid>, IHasTenant
 {
-    public Guid Id { get; private set; } = Guid.NewGuid();
-
     public string TenantId { get; private set; } = default!;
 
     public string CorrelationId { get; private set; } = default!;
@@ -16,11 +16,9 @@ public sealed class TenantProvisioning
 
     public string? JobId { get; private set; }
 
-    public DateTime CreatedUtc { get; private set; } = DateTime.UtcNow;
-
-    public DateTime? StartedUtc { get; private set; }
-
-    public DateTime? CompletedUtc { get; private set; }
+    public DateTimeOffset CreatedOnUtc { get; private set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? StartedOnUtc { get; private set; }
+    public DateTimeOffset? CompletedOnUtc { get; private set; }
 
     public ICollection<TenantProvisioningStep> Steps { get; private set; } = new List<TenantProvisioningStep>();
 
@@ -30,9 +28,10 @@ public sealed class TenantProvisioning
 
     public TenantProvisioning(string tenantId, string correlationId)
     {
+        Id = Guid.NewGuid();
         TenantId = tenantId;
         CorrelationId = correlationId;
-        CreatedUtc = DateTime.UtcNow;
+        CreatedOnUtc = DateTimeOffset.UtcNow;
     }
 
     public void SetJobId(string jobId) => JobId = jobId;
@@ -40,14 +39,14 @@ public sealed class TenantProvisioning
     public void MarkRunning(string step)
     {
         Status = TenantProvisioningStatus.Running;
-        StartedUtc ??= DateTime.UtcNow;
+        StartedOnUtc ??= DateTimeOffset.UtcNow;
         CurrentStep = step;
     }
 
     public void MarkCompleted()
     {
         Status = TenantProvisioningStatus.Completed;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedOnUtc = DateTimeOffset.UtcNow;
         CurrentStep = null;
         Error = null;
     }
@@ -57,6 +56,6 @@ public sealed class TenantProvisioning
         Status = TenantProvisioningStatus.Failed;
         CurrentStep = step;
         Error = error;
-        CompletedUtc = DateTime.UtcNow;
+        CompletedOnUtc = DateTimeOffset.UtcNow;
     }
 }

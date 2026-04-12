@@ -1,6 +1,8 @@
+using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Caching;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Shared.Constants;
+using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Domain;
@@ -13,7 +15,7 @@ internal sealed class UserPermissionService(
     UserManager<FshUser> userManager,
     RoleManager<FshRole> roleManager,
     IdentityDbContext db,
-    ICacheService cache) : IUserPermissionService
+    ITenantCacheService cache) : IUserPermissionService
 {
     public async Task<List<string>?> GetPermissionsAsync(string userId, CancellationToken cancellationToken)
     {
@@ -38,7 +40,7 @@ internal sealed class UserPermissionService(
                 }
                 return permissions.Distinct().ToList();
             },
-            cancellationToken: cancellationToken);
+            ct: cancellationToken);
 
         return permissions;
     }
@@ -57,6 +59,6 @@ internal sealed class UserPermissionService(
 
     public Task InvalidatePermissionCacheAsync(string userId, CancellationToken cancellationToken)
     {
-        return cache.RemoveItemAsync(GetPermissionCacheKey(userId), cancellationToken);
+        return cache.RemoveAsync(GetPermissionCacheKey(userId), cancellationToken);
     }
 }

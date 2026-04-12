@@ -3,21 +3,24 @@ using System;
 using FSH.Modules.Auditing.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace FSH.Playground.Migrations.PostgreSQL.Audit
+namespace FSH.Playground.Migrations.PostgreSQL.Auditing
 {
     [DbContext(typeof(AuditDbContext))]
-    partial class AuditDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319230156_StandardizeTimestampsToDateTimeOffset")]
+    partial class StandardizeTimestampsToDateTimeOffset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -34,14 +37,14 @@ namespace FSH.Playground.Migrations.PostgreSQL.Audit
                     b.Property<int>("EventType")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("OccurredAtUtc")
+                    b.Property<DateTimeOffset>("OccurredOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PayloadJson")
                         .IsRequired()
                         .HasColumnType("jsonb");
 
-                    b.Property<DateTime>("ReceivedAtUtc")
+                    b.Property<DateTimeOffset>("ReceivedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("RequestId")
@@ -77,7 +80,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Audit
 
                     b.HasIndex("EventType");
 
-                    b.HasIndex("OccurredAtUtc");
+                    b.HasIndex("OccurredOnUtc");
 
                     b.HasIndex("TenantId");
 

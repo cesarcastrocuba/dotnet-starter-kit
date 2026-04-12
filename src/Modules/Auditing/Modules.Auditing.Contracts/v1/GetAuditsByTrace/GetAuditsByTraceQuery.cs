@@ -7,8 +7,8 @@ public sealed class GetAuditsByTraceQuery : IQuery<IReadOnlyList<AuditSummaryDto
 {
     public string TraceId { get; init; } = default!;
 
-    public DateTime? FromUtc { get; init; }
+    public DateTimeOffset? FromOnUtc { get; init; }
 
-    public DateTime? ToUtc { get; init; }
+    public DateTimeOffset? ToOnUtc { get; init; }
 }
 

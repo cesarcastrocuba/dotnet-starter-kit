@@ -74,8 +74,8 @@ public sealed class RefreshTokenCommandHandler
 
         if (parsedAccessToken is not null)
         {
-            var accessTokenSubject = parsedAccessToken.Claims
-                .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var accessTokenSubject = parsedAccessToken.Subject 
+                ?? parsedAccessToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             if (!string.IsNullOrEmpty(accessTokenSubject) &&
                 !string.Equals(accessTokenSubject, subject, StringComparison.Ordinal))
@@ -92,14 +92,14 @@ public sealed class RefreshTokenCommandHandler
         var newToken = await _tokenService.IssueAsync(subject, claims, null, cancellationToken);
 
         // Persist rotated refresh token for this user
-        await _identityService.StoreRefreshTokenAsync(subject, newToken.RefreshToken, newToken.RefreshTokenExpiresAt, cancellationToken);
+        await _identityService.StoreRefreshTokenAsync(subject, newToken.RefreshToken, newToken.RefreshTokenExpiresOnUtc, cancellationToken);
 
         // Update the session with the new refresh token hash
         var newRefreshTokenHash = Sha256Short(newToken.RefreshToken);
         await _sessionService.UpdateSessionRefreshTokenAsync(
             refreshTokenHash,
             newRefreshTokenHash,
-            newToken.RefreshTokenExpiresAt,
+            newToken.RefreshTokenExpiresOnUtc,
             cancellationToken);
 
         // Audit the newly issued token with a fingerprint
@@ -109,13 +109,13 @@ public sealed class RefreshTokenCommandHandler
             userName: claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? string.Empty,
             clientId: clientId!,
             tokenFingerprint: fingerprint,
-            expiresUtc: newToken.AccessTokenExpiresAt,
+            expiresOnUtc: newToken.AccessTokenExpiresOnUtc,
             ct: cancellationToken);
 
         return new RefreshTokenCommandResponse(
             Token: newToken.AccessToken,
             RefreshToken: newToken.RefreshToken,
-            RefreshTokenExpiryTime: newToken.RefreshTokenExpiresAt);
+            RefreshTokenExpiresOnUtc: newToken.RefreshTokenExpiresOnUtc);
     }
 
     private static string Sha256Short(string value)
