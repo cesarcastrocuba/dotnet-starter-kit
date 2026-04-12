@@ -1,42 +1,23 @@
-using MailKit.Security;
-using Microsoft.Extensions.Logging;
+﻿using FSH.Framework.Mailing.Contracts;
+using FSH.Framework.Mailing.Messages;
+using FSH.Framework.Mailing.Options;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using SmtpClient = MailKit.Net.Smtp.SmtpClient;
 
-namespace FSH.Framework.Mailing.Services;
+namespace FSH.Framework.Mailing.Composers;
 
-public class SmtpMailService(IOptions<MailOptions> settings, ILogger<SmtpMailService> logger) : IMailService
+public class MimeKitEmailComposer(IOptions<MailOptions> settings) : IMailComposer<MimeMessage>
 {
-    private readonly MailOptions _settings = settings.Value;
-    private readonly ILogger<SmtpMailService> _logger = logger;
+    private readonly MailOptions _settings = settings!.Value;
 
-    public async Task SendAsync(MailRequest request, CancellationToken ct)
+    public MimeMessage Compose(MailRequest request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
-        ValidateSmtpConfiguration();
-
-        using var email = BuildMimeMessage(request);
-        await AddAttachmentsAsync(email, request, ct);
-        await SendEmailAsync(email, ct);
-    }
-
-    private void ValidateSmtpConfiguration()
-    {
-        if (_settings.Smtp?.Host is null)
-        {
-            throw new InvalidOperationException("SMTP Host is not configured.");
-        }
-    }
-
-    private MimeMessage BuildMimeMessage(MailRequest request)
-    {
         var email = new MimeMessage();
-
         ConfigureSender(email, request);
         ConfigureRecipients(email, request);
         ConfigureContent(email, request);
-
+        AddAttachmentsAsync(email, request, ct);
         return email;
     }
 
@@ -108,7 +89,7 @@ public class SmtpMailService(IOptions<MailOptions> settings, ILogger<SmtpMailSer
         email.Subject = request.Subject;
     }
 
-    private static async Task AddAttachmentsAsync(MimeMessage email, MailRequest request, CancellationToken ct)
+    private static void AddAttachmentsAsync(MimeMessage email, MailRequest request, CancellationToken ct)
     {
         var builder = new BodyBuilder { HtmlBody = request.Body };
 
@@ -117,33 +98,12 @@ public class SmtpMailService(IOptions<MailOptions> settings, ILogger<SmtpMailSer
             foreach (var attachment in request.AttachmentData)
             {
                 using var stream = new MemoryStream();
-                await stream.WriteAsync(attachment.Value, ct);
+                stream.Write(attachment.Value);
                 stream.Position = 0;
-                await builder.Attachments.AddAsync(attachment.Key, stream, ct);
+                builder.Attachments.Add(attachment.Key, stream, ct);
             }
         }
 
         email.Body = builder.ToMessageBody();
-    }
-
-    private async Task SendEmailAsync(MimeMessage email, CancellationToken ct)
-    {
-        using var client = new SmtpClient();
-
-        try
-        {
-            await client.ConnectAsync(_settings.Smtp!.Host, _settings.Smtp.Port, SecureSocketOptions.StartTls, ct);
-            await client.AuthenticateAsync(_settings.Smtp.UserName, _settings.Smtp.Password, ct);
-            await client.SendAsync(email, ct);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while sending email: {Message}", ex.Message);
-            throw new InvalidOperationException("Failed to send email.", ex);
-        }
-        finally
-        {
-            await client.DisconnectAsync(true, ct);
-        }
     }
 }

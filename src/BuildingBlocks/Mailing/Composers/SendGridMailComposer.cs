@@ -1,27 +1,20 @@
+﻿using FSH.Framework.Mailing.Contracts;
+using FSH.Framework.Mailing.Messages;
+using FSH.Framework.Mailing.Options;
 using Microsoft.Extensions.Options;
-using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace FSH.Framework.Mailing.Services;
+namespace FSH.Framework.Mailing.Composers;
 
-public class SendGridMailService : IMailService
+public class SendGridMailComposer(IOptions<MailOptions> settings) : IMailComposer<SendGridMessage>
 {
-    private readonly MailOptions _settings;
+    private readonly MailOptions _settings = settings!.Value;
 
-    public SendGridMailService(IOptions<MailOptions> settings)
-    {
-        ArgumentNullException.ThrowIfNull(settings);
-        _settings = settings.Value;
-    }
-
-    public async Task SendAsync(MailRequest request, CancellationToken ct)
+    public SendGridMessage Compose(MailRequest request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
         ValidateConfiguration();
 
-        var client = new SendGridClient(_settings.SendGrid!.ApiKey!);
         var from = CreateFromAddress(request);
         var msg = MailHelper.CreateSingleEmail(
             from,
@@ -32,8 +25,7 @@ public class SendGridMailService : IMailService
 
         ConfigureRecipients(msg, request);
         AddAttachments(msg, request);
-
-        await client.SendEmailAsync(msg, ct);
+        return msg;
     }
 
     private void ValidateConfiguration()
